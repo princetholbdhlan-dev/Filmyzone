@@ -3,80 +3,180 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Panel - FILMYZONE</title>
+    <title>Advanced Admin Editor - FILMYZONE</title>
     <link rel="stylesheet" href="../style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .editor-container { max-width: 800px; margin: 30px auto; background: #161822; padding: 25px; border-radius: 12px; border: 1px solid #333a56; }
+        .form-group { margin-bottom: 20px; display: flex; flex-direction: column; gap: 8px; }
+        .form-group label { color: #b3b3b3; font-size: 14px; font-weight: 600; }
+        .form-group input, .form-group select, .form-group textarea { background: #0f1016; border: 1px solid #333a56; padding: 12px; border-radius: 8px; color: white; outline: none; font-size: 14px; }
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus { border-color: #e50914; }
+        
+        .image-builder-box { background: #0f1016; border: 1px dashed #333a56; padding: 15px; border-radius: 8px; margin-bottom: 10px; }
+        .image-controls { display: grid; grid-template-columns: 2fr 1fr 1fr auto; gap: 10px; margin-top: 8px; }
+        @media(max-width: 768px) { .image-controls { grid-template-columns: 1fr; } }
+        
+        .btn-secondary { background: #222638; color: white; border: 1px solid #333a56; padding: 8px 15px; border-radius: 6px; cursor: pointer; font-weight: 600; }
+        .btn-secondary:hover { background: #333a56; }
+        .btn-danger { background: #e50914; color: white; border: none; padding: 8px 12px; border-radius: 6px; cursor: pointer; }
+    </style>
 </head>
 <body>
     <!-- Header / Navbar -->
     <header>
-        <div class="logo"><i class="fa-solid fa-shield-halved"></i> FILMYZONE Admin</div>
+        <div class="logo"><i class="fa-solid fa-pen-nib"></i> FILMYZONE Editor</div>
         <nav id="navMenu">
             <a href="../index.html">Home</a>
             <a href="movies.html">Movies</a>
-            <a href="admin.html" class="active">Admin Panel</a>
+            <a href="admin.html" class="active">Admin Editor</a>
         </nav>
         <div class="hamburger" id="hamburger">
             <i class="fa-solid fa-bars"></i>
         </div>
     </header>
 
-    <!-- Admin Form Section -->
-    <section class="contact-section" style="max-width: 650px; margin: 40px auto;">
-        <h2><i class="fa-solid fa-circle-plus"></i> Add New Movie Post</h2>
-        <form class="contact-form" id="adminMovieForm" onsubmit="addNewMovie(event)">
-            <label style="color: #b3b3b3; font-size: 14px;">Movie Title</label>
-            <input type="text" id="movieTitle" placeholder="e.g. Avengers: Endgame" required>
+    <!-- Advanced Editor Form -->
+    <div class="editor-container">
+        <h2><i class="fa-solid fa-sliders"></i> Advanced Movie Post Editor</h2>
+        <p style="color: #8c93a8; font-size: 13px; margin-bottom: 20px;">Yahan aap movie ki poori details, multiple screenshots aur unki size/location customize karke publish kar sakte hain.</p>
+        
+        <form id="advancedAdminForm" onsubmit="publishAdvancedMovie(event)">
+            
+            <div class="form-group">
+                <label>Movie Title</label>
+                <input type="text" id="movieTitle" placeholder="e.g. Avatar: The Way of Water" required>
+            </div>
 
-            <label style="color: #b3b3b3; font-size: 14px;">Select Category</label>
-            <select id="movieCategory" style="background: #161822; border: 1px solid #333a56; padding: 12px; border-radius: 8px; color: white; outline: none; font-size: 14px;" required>
-                <option value="action">Action</option>
-                <option value="sci-fi">Sci-Fi</option>
-                <option value="drama">Drama</option>
-                <option value="horror">Horror</option>
-            </select>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                <div class="form-group">
+                    <label>Category</label>
+                    <select id="movieCategory" required>
+                        <option value="action">Action</option>
+                        <option value="sci-fi">Sci-Fi</option>
+                        <option value="drama">Drama</option>
+                        <option value="horror">Horror</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>IMDb Rating</label>
+                    <input type="text" id="movieRating" placeholder="e.g. 7.9" required>
+                </div>
+            </div>
 
-            <label style="color: #b3b3b3; font-size: 14px;">Release Year & Genre Subtitle</label>
-            <input type="text" id="movieGenre" placeholder="e.g. Action / Sci-Fi • 2019" required>
+            <div class="form-group">
+                <label>Genre & Year Subtitle</label>
+                <input type="text" id="movieGenre" placeholder="e.g. Sci-Fi / Action • 2022" required>
+            </div>
 
-            <label style="color: #b3b3b3; font-size: 14px;">IMDb Rating</label>
-            <input type="text" id="movieRating" placeholder="e.g. 8.4" required>
+            <div class="form-group">
+                <label>Main Poster Image URL</label>
+                <input type="url" id="moviePoster" placeholder="Main cover poster link" required>
+            </div>
 
-            <label style="color: #b3b3b3; font-size: 14px;">Poster Image URL</label>
-            <input type="url" id="moviePoster" placeholder="Paste image direct link (Unsplash / ImgBB)" required>
+            <div class="form-group">
+                <label>Movie Story / Description</label>
+                <textarea id="movieDesc" rows="4" placeholder="Write full movie review or summary here..." required></textarea>
+            </div>
 
-            <label style="color: #b3b3b3; font-size: 14px;">Download Link (Google Drive / Mega)</label>
-            <input type="url" id="movieLink" placeholder="https://example.com/download-link" required>
+            <!-- Multiple Images Section with Size & Location Control -->
+            <div class="form-group">
+                <label><i class="fa-solid fa-images"></i> Additional Screenshots / Images (Multiple add karein)</label>
+                <div id="imageFieldsContainer"></div>
+                <button type="button" class="btn-secondary" onclick="addImageField()" style="margin-top: 5px;"><i class="fa-solid fa-plus"></i> Add Another Image</button>
+            </div>
 
-            <button type="submit" class="btn-primary" style="margin-top: 10px;"><i class="fa-solid fa-upload"></i> Publish Movie</button>
+            <div class="form-group">
+                <label>Download Link (Google Drive / Mega)</label>
+                <input type="url" id="movieLink" placeholder="https://example.com/download" required>
+            </div>
+
+            <button type="submit" class="btn-primary" style="width: 100%; justify-content: center; padding: 12px; font-size: 16px; margin-top: 10px;">
+                <i class="fa-solid fa-cloud-arrow-up"></i> Publish Movie Post
+            </button>
         </form>
-    </section>
+    </div>
 
     <!-- Footer -->
     <footer>
-        <p>&copy; 2026 FILMYZONE Admin Panel. All rights reserved.</p>
+        <p>&copy; 2026 FILMYZONE Admin. All rights reserved.</p>
     </footer>
 
     <script>
-        function addNewMovie(e) {
-            e.preventDefault();
+        // Dynamic Image Field Adder with Size & Alignment controls
+        function addImageField() {
+            const container = document.getElementById('imageFieldsContainer');
+            const box = document.createElement('div');
+            box.className = 'image-builder-box';
             
-            const newMovie = {
+            box.innerHTML = `
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:5px;">
+                    <span style="font-size:12px; color:#b3b3b3;">Image Setup</span>
+                    <button type="button" class="btn-danger" onclick="this.parentElement.parentElement.remove()"><i class="fa-solid fa-trash"></i></button>
+                </div>
+                <input type="url" class="img-url-input" placeholder="Paste Image URL here..." style="width:100%; background:#161822; border:1px solid #333a56; padding:8px; border-radius:6px; color:white;" required>
+                <div class="image-controls">
+                    <div>
+                        <label style="font-size:11px; color:#8c93a8;">Width Size</label>
+                        <select class="img-size-select" style="width:100%; background:#161822; border:1px solid #333a56; padding:6px; border-radius:6px; color:white; font-size:12px;">
+                            <option value="100%">Full Width (100%)</option>
+                            <option value="75%">Medium (75%)</option>
+                            <option value="50%">Half (50%)</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label style="font-size:11px; color:#8c93a8;">Alignment (Location)</label>
+                        <select class="img-align-select" style="width:100%; background:#161822; border:1px solid #333a56; padding:6px; border-radius:6px; color:white; font-size:12px;">
+                            <option value="center">Center</option>
+                            <option value="left">Left</option>
+                            <option value="right">Right</option>
+                        </select>
+                    </div>
+                </div>
+            `;
+            container.appendChild(box);
+        }
+
+        // Publish Handler
+        function publishAdvancedMovie(e) {
+            e.preventDefault();
+
+            // Collect all custom images with their size and alignment settings
+            const imageBoxes = document.querySelectorAll('.image-builder-box');
+            let screenshots = [];
+            imageBoxes.forEach(box => {
+                const url = box.querySelector('.img-url-input').value;
+                const width = box.querySelector('.img-size-select').value;
+                const align = box.querySelector('.img-align-select').value;
+                if(url) {
+                    screenshots.push({ url, width, align });
+                }
+            });
+
+            const movieData = {
                 title: document.getElementById('movieTitle').value,
                 category: document.getElementById('movieCategory').value,
-                genre: document.getElementById('movieGenre').value,
                 rating: document.getElementById('movieRating').value,
+                genre: document.getElementById('movieGenre').value,
                 poster: document.getElementById('moviePoster').value,
+                description: document.getElementById('movieDesc').value,
+                screenshots: screenshots,
                 link: document.getElementById('movieLink').value
             };
 
-            // Get existing movies from LocalStorage or initialize empty array
+            // Save to LocalStorage
             let movies = JSON.parse(localStorage.getItem('filmyzone_movies')) || [];
-            movies.push(newMovie);
+            movies.push(movieData);
             localStorage.setItem('filmyzone_movies', JSON.stringify(movies));
 
-            alert('Movie published successfully! Check the Movies page.');
-            document.getElementById('adminMovieForm').reset();
+            alert('Movie post successfully published with custom images & layout!');
+            document.getElementById('advancedAdminForm').reset();
+            document.getElementById('imageFieldsContainer').innerHTML = '';
+        }
+
+        // Add default one image box on load
+        window.onload = function() {
+            addImageField();
         }
     </script>
 </body>
