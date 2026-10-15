@@ -25,11 +25,11 @@
 
         /* Content Editable Area */
         .editor-box { flex: 1; min-height: 400px; background: #0f1016; border: 1px solid #333a56; border-top: none; border-radius: 0 0 8px 8px; padding: 15px; color: #fff; outline: none; font-size: 15px; line-height: 1.6; overflow-y: auto; }
-        .editor-box img { max-width: 100%; cursor: pointer; border-radius: 6px; margin: 10px 0; display: block; }
+        .editor-box img { cursor: pointer; border-radius: 6px; margin: 5px 15px 10px 0; }
         .editor-box img.selected { outline: 3px solid #e50914; }
 
         /* Image Resize Floating Bar */
-        .img-resize-bar { display: none; background: #222638; padding: 8px; border-radius: 6px; margin-bottom: 10px; gap: 8px; align-items: center; border: 1px solid #333a56; }
+        .img-resize-bar { display: none; background: #222638; padding: 8px; border-radius: 6px; margin-bottom: 10px; gap: 8px; align-items: center; border: 1px solid #333a56; flex-wrap: wrap; }
         .img-resize-bar span { font-size: 12px; color: #ffc107; font-weight: 600; }
         .img-resize-bar button { background: #161822; color: #fff; border: 1px solid #333a56; padding: 4px 10px; border-radius: 4px; cursor: pointer; font-size: 12px; }
         .img-resize-bar button:hover { background: #e50914; }
@@ -65,11 +65,10 @@
 
             <!-- Image Resize Toolbar (Appears when image inside editor is touched) -->
             <div id="imgResizeBar" class="img-resize-bar">
-                <span><i class="fa-solid fa-image"></i> Image Selected:</span>
-                <button type="button" onclick="resizeSelectedImage('25%')">Small</button>
-                <button type="button" onclick="resizeSelectedImage('50%')">Medium</button>
-                <button type="button" onclick="resizeSelectedImage('100%')">Full</button>
-                <button type="button" onclick="deleteSelectedImage()" style="background:#e50914;"><i class="fa-solid fa-trash"></i></button>
+                <span><i class="fa-solid fa-image"></i> Image Layout:</span>
+                <button type="button" onclick="setImgStyle('35%', 'left')">Left Wrap (Text on Right)</button>
+                <button type="button" onclick="setImgStyle('100%', 'none')">Full Width</button>
+                <button type="button" onclick="deleteSelectedImage()" style="background:#e50914;"><i class="fa-solid fa-trash"></i> Delete</button>
             </div>
 
             <!-- Advanced Formatting Toolbar -->
@@ -84,17 +83,17 @@
 
                 <select onchange="changeTextSize(this.value); this.selectedIndex=0;">
                     <option value="">Text Size</option>
-                    <option value="1">Size 1 (Chhota)</option>
+                    <option value="1">Size 1</option>
                     <option value="3">Size 3 (Normal)</option>
-                    <option value="5">Size 5 (Bada)</option>
-                    <option value="7">Size 7 (Bahut Bada)</option>
+                    <option value="5">Size 5</option>
+                    <option value="7">Size 7</option>
                 </select>
 
                 <button type="button" onclick="formatDoc('bold')"><i class="fa-solid fa-bold"></i></button>
                 <button type="button" onclick="formatDoc('italic')"><i class="fa-solid fa-italic"></i></button>
                 <button type="button" onclick="formatDoc('underline')"><i class="fa-solid fa-underline"></i></button>
                 
-                <!-- Fixed Add Image Label for Gallery -->
+                <!-- Add Image Label for Gallery -->
                 <label class="toolbar-btn">
                     <i class="fa-solid fa-image"></i> Add Image
                     <input type="file" accept="image/*" style="display:none;" onchange="insertGalleryImage(event)">
@@ -102,7 +101,7 @@
             </div>
 
             <!-- Editable Typing Box -->
-            <div id="editorContent" class="editor-box" contenteditable="true" placeholder="Yahan movie ki poori details type karein aur gallery se images add karein..."></div>
+            <div id="editorContent" class="editor-box" contenteditable="true" placeholder="Yahan movie ki poori details type karein. Image add karne ke baad text automatically right side aa jayega..."></div>
         </div>
 
         <!-- RIGHT SIDE: ~30% Sidebar Settings -->
@@ -158,8 +157,8 @@
                     const editor = document.getElementById('editorContent');
                     editor.focus();
                     
-                    // Safely insert HTML at current cursor position using execCommand
-                    const imgHtml = `<br><img src="${base64}" style="width:100%;"><br>`;
+                    // Default image with float left so text wraps to the right side
+                    const imgHtml = `<img src="${base64}" style="float: left; width: 38%;" onclick="selectEditorImage(this)">`;
                     document.execCommand('insertHTML', false, imgHtml);
                     
                     attachImageClickListeners();
@@ -189,9 +188,16 @@
             }
         };
 
-        function resizeSelectedImage(size) {
+        function setImgStyle(width, floatVal) {
             if (selectedImg) {
-                selectedImg.style.width = size;
+                selectedImg.style.width = width;
+                selectedImg.style.float = floatVal;
+                if(floatVal === 'none') {
+                    selectedImg.style.margin = '10px auto';
+                    selectedImg.style.display = 'block';
+                } else {
+                    selectedImg.style.margin = '5px 15px 10px 0';
+                }
             }
         }
 
@@ -206,49 +212,3 @@
         function previewMainPoster(event) {
             const file = event.target.files[0];
             if (file) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    const base64 = e.target.result;
-                    document.getElementById('moviePosterBase64').value = base64;
-                    const preview = document.getElementById('posterPreview');
-                    preview.src = base64;
-                    preview.style.display = 'block';
-                };
-                reader.readAsDataURL(file);
-            }
-        }
-
-        function publishPost() {
-            const title = document.getElementById('postTitle').value;
-            const category = document.getElementById('movieCategory').value;
-            const rating = document.getElementById('movieRating').value;
-            const genre = document.getElementById('movieGenre').value;
-            const poster = document.getElementById('moviePosterBase64').value;
-            const link = document.getElementById('movieLink').value;
-            const description = document.getElementById('editorContent').innerHTML;
-
-            if (!title || !poster || !link) {
-                alert('Kripya Title, Main Poster aur Download Link zaroor bharein!');
-                return;
-            }
-
-            const movieData = {
-                title,
-                category,
-                rating: rating || '8.0',
-                genre: genre || 'Movie • 2026',
-                poster,
-                link,
-                description
-            };
-
-            let movies = JSON.parse(localStorage.getItem('filmyzone_movies')) || [];
-            movies.push(movieData);
-            localStorage.setItem('filmyzone_movies', JSON.stringify(movies));
-
-            alert('Movie post safaltapoorvak publish ho gayi hai!');
-            window.location.href = 'movies.html';
-        }
-    </script>
-</body>
-</html>
