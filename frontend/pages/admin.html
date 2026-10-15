@@ -55,7 +55,6 @@
             <label>Main Poster (Upload from Gallery)</label>
             <input type="file" id="posterFileInput" class="form-control" accept="image/*" onchange="previewMainPoster(event)">
             <img id="posterPreview" class="preview-img" alt="Poster Preview">
-            <!-- Hidden input to hold base64 string -->
             <input type="hidden" id="moviePosterBase64">
 
             <label>Download Link</label>
@@ -66,9 +65,9 @@
                 <button type="button" class="toolbar-btn" onclick="formatText('bold')"><i class="fa-solid fa-bold"></i></button>
                 <button type="button" class="toolbar-btn" onclick="formatText('italic')"><i class="fa-solid fa-italic"></i></button>
                 <button type="button" class="toolbar-btn" onclick="formatText('underline')"><i class="fa-solid fa-underline"></i></button>
-                <!-- Gallery Image Upload Button -->
-                <label for="galleryImageInput" class="toolbar-btn" style="margin:0; display:inline-block; cursor:pointer;"><i class="fa-solid fa-image"></i> Upload Image</label>
-                <input type="file" id="galleryImageInput" accept="image/*" style="display:none;" onchange="insertGalleryImage(event)">
+                <!-- Fixed JavaScript Trigger for Gallery Upload -->
+                <button type="button" class="toolbar-btn" onclick="triggerImageUpload()"><i class="fa-solid fa-image"></i> Upload Image</button>
+                <input type="file" id="hiddenGalleryInput" accept="image/*" style="display:none;" onchange="insertGalleryImage(event)">
             </div>
             <div id="editorContent" class="editor-box" contenteditable="true" placeholder="Movie ke baare mein yahan likhein aur gallery se images add karein..."></div>
 
@@ -77,7 +76,7 @@
     </div>
 
     <script>
-        // Convert Main Poster File to Base64
+        // Main Poster Preview
         function previewMainPoster(event) {
             const file = event.target.files[0];
             if (file) {
@@ -93,20 +92,25 @@
             }
         }
 
-        // Format Text helper
+        // Text Formatting helper
         function formatText(command) {
             document.execCommand(command, false, null);
         }
 
-        // Insert Gallery Image into Description Box
+        // Trigger hidden file input programmatically
+        function triggerImageUpload() {
+            document.getElementById('hiddenGalleryInput').click();
+        }
+
+        // Insert Gallery Image into Description Box safely
         function insertGalleryImage(event) {
             const file = event.target.files[0];
             if (file) {
                 const reader = new FileReader();
                 reader.onload = function(e) {
                     const base64String = e.target.result;
-                    const imgHtml = `<br><img src="${base64String}" style="max-width:100%; border-radius:8px; margin:10px 0;"><br>`;
-                    document.execCommand('insertHTML', false, imgHtml);
+                    const editor = document.getElementById('editorContent');
+                    editor.innerHTML += `<br><img src="${base64String}" style="max-width:100%; border-radius:8px; margin:10px 0;"><br>`;
                 };
                 reader.readAsDataURL(file);
             }
@@ -141,7 +145,7 @@
             movies.push(movieData);
             localStorage.setItem('filmyzone_movies', JSON.stringify(movies));
 
-            alert('Movie Post Published Successfully from Gallery!');
+            alert('Movie Post Published Successfully!');
             window.location.href = 'movies.html';
         }
     </script>
