@@ -9,7 +9,7 @@
     <style>
         body { background-color: #0f1016; color: #fff; margin: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
         
-        /* Main Split Layout */
+        /* Main Split Layout (~70% and ~30%) */
         .admin-wrapper { display: flex; min-height: calc(100vh - 60px); }
         .editor-container { flex: 7; padding: 25px; background: #161822; border-right: 1px solid #222638; display: flex; flex-direction: column; }
         .sidebar-container { flex: 3; padding: 25px; background: #161822; overflow-y: auto; }
@@ -20,8 +20,8 @@
 
         /* Toolbar styling */
         .toolbar { display: flex; flex-wrap: wrap; gap: 6px; background: #0f1016; padding: 10px; border: 1px solid #333a56; border-radius: 8px 8px 0 0; align-items: center; }
-        .toolbar button, .toolbar select { background: #161822; color: #b3b3b3; border: 1px solid #333a56; padding: 6px 10px; border-radius: 4px; cursor: pointer; font-size: 13px; outline: none; }
-        .toolbar button:hover, .toolbar select:hover { background: #e50914; color: white; border-color: #e50914; }
+        .toolbar button, .toolbar select, .toolbar label.toolbar-btn { background: #161822; color: #b3b3b3; border: 1px solid #333a56; padding: 6px 10px; border-radius: 4px; cursor: pointer; font-size: 13px; outline: none; display: inline-flex; align-items: center; gap: 5px; }
+        .toolbar button:hover, .toolbar select:hover, .toolbar label.toolbar-btn:hover { background: #e50914; color: white; border-color: #e50914; }
 
         /* Content Editable Area */
         .editor-box { flex: 1; min-height: 400px; background: #0f1016; border: 1px solid #333a56; border-top: none; border-radius: 0 0 8px 8px; padding: 15px; color: #fff; outline: none; font-size: 15px; line-height: 1.6; overflow-y: auto; }
@@ -63,7 +63,7 @@
             
             <input type="text" id="postTitle" class="form-control" placeholder="Enter Movie Title here..." style="font-size: 18px; padding: 12px; font-weight: bold;">
 
-            <!-- Image Resize Toolbar (Appears when image inside editor is touched/clicked) -->
+            <!-- Image Resize Toolbar (Appears when image inside editor is touched) -->
             <div id="imgResizeBar" class="img-resize-bar">
                 <span><i class="fa-solid fa-image"></i> Image Selected:</span>
                 <button type="button" onclick="resizeSelectedImage('25%')">Small</button>
@@ -75,17 +75,30 @@
             <!-- Advanced Formatting Toolbar -->
             <div class="toolbar">
                 <select onchange="formatDoc('formatBlock', this.value); this.selectedIndex=0;">
-                    <option value="">Style</option>
-                    <option value="p">Paragraph</option>
-                    <option value="h1">Heading 1</option>
-                    <option value="h2">Heading 2</option>
-                    <option value="h3">Heading 3</option>
+                    <option value="">Text Style / Heading</option>
+                    <option value="p">Normal Paragraph</option>
+                    <option value="h1">Heading 1 (Bada)</option>
+                    <option value="h2">Heading 2 (Medium)</option>
+                    <option value="h3">Heading 3 (Chhota)</option>
                 </select>
+
+                <select onchange="changeTextSize(this.value); this.selectedIndex=0;">
+                    <option value="">Text Size</option>
+                    <option value="1">Size 1 (Chhota)</option>
+                    <option value="3">Size 3 (Normal)</option>
+                    <option value="5">Size 5 (Bada)</option>
+                    <option value="7">Size 7 (Bahut Bada)</option>
+                </select>
+
                 <button type="button" onclick="formatDoc('bold')"><i class="fa-solid fa-bold"></i></button>
                 <button type="button" onclick="formatDoc('italic')"><i class="fa-solid fa-italic"></i></button>
                 <button type="button" onclick="formatDoc('underline')"><i class="fa-solid fa-underline"></i></button>
-                <button type="button" onclick="triggerImageUpload()"><i class="fa-solid fa-image"></i> Add Image</button>
-                <input type="file" id="hiddenGalleryInput" accept="image/*" style="display:none;" onchange="insertGalleryImage(event)">
+                
+                <!-- Working Add Image Label for Gallery -->
+                <label class="toolbar-btn">
+                    <i class="fa-solid fa-image"></i> Add Image
+                    <input type="file" accept="image/*" style="display:none;" onchange="insertGalleryImage(event)">
+                </label>
             </div>
 
             <!-- Editable Typing Box -->
@@ -126,17 +139,16 @@
     <script>
         let selectedImg = null;
 
-        // Text Formatting helper
         function formatDoc(cmd, value = null) {
             document.execCommand(cmd, false, value);
         }
 
-        // Trigger Hidden Gallery Input
-        function triggerImageUpload() {
-            document.getElementById('hiddenGalleryInput').click();
+        function changeTextSize(sizeVal) {
+            if(sizeVal) {
+                document.execCommand('fontSize', false, sizeVal);
+            }
         }
 
-        // Insert Image into Editor from Gallery
         function insertGalleryImage(event) {
             const file = event.target.files[0];
             if (file) {
@@ -151,7 +163,6 @@
             }
         }
 
-        // Click listener on editor images for resizing
         function attachImageClickListeners() {
             const imgs = document.querySelectorAll('#editorContent img');
             imgs.forEach(img => {
@@ -165,7 +176,6 @@
             });
         }
 
-        // Click outside to deselect image
         document.getElementById('editorContent').onclick = function(e) {
             if(e.target.tagName !== 'IMG') {
                 document.querySelectorAll('#editorContent img').forEach(i => i.classList.remove('selected'));
@@ -174,14 +184,12 @@
             }
         };
 
-        // Resize selected image width
         function resizeSelectedImage(size) {
             if (selectedImg) {
                 selectedImg.style.width = size;
             }
         }
 
-        // Delete selected image
         function deleteSelectedImage() {
             if (selectedImg) {
                 selectedImg.remove();
@@ -190,7 +198,6 @@
             }
         }
 
-        // Main Poster Preview
         function previewMainPoster(event) {
             const file = event.target.files[0];
             if (file) {
@@ -206,7 +213,6 @@
             }
         }
 
-        // Publish Post to LocalStorage
         function publishPost() {
             const title = document.getElementById('postTitle').value;
             const category = document.getElementById('movieCategory').value;
@@ -214,3 +220,30 @@
             const genre = document.getElementById('movieGenre').value;
             const poster = document.getElementById('moviePosterBase64').value;
             const link = document.getElementById('movieLink').value;
+            const description = document.getElementById('editorContent').innerHTML;
+
+            if (!title || !poster || !link) {
+                alert('Kripya Title, Main Poster aur Download Link zaroor bharein!');
+                return;
+            }
+
+            const movieData = {
+                title,
+                category,
+                rating: rating || '8.0',
+                genre: genre || 'Movie • 2026',
+                poster,
+                link,
+                description
+            };
+
+            let movies = JSON.parse(localStorage.getItem('filmyzone_movies')) || [];
+            movies.push(movieData);
+            localStorage.setItem('filmyzone_movies', JSON.stringify(movies));
+
+            alert('Movie post safaltapoorvak publish ho gayi hai!');
+            window.location.href = 'movies.html';
+        }
+    </script>
+</body>
+</html>
