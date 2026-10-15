@@ -25,10 +25,11 @@
 
         /* Content Editable Area */
         .editor-box { flex: 1; min-height: 400px; background: #0f1016; border: 1px solid #333a56; border-top: none; border-radius: 0 0 8px 8px; padding: 15px; color: #fff; outline: none; font-size: 15px; line-height: 1.6; overflow-y: auto; }
-        .editor-box img { cursor: pointer; border-radius: 6px; margin: 10px; display: inline-block; max-width: 100%; }
+        .editor-box img { cursor: grab; border-radius: 6px; margin: 10px; display: inline-block; max-width: 100%; transition: outline 0.2s; }
+        .editor-box img:active { cursor: grabbing; }
         .editor-box img.selected { outline: 3px solid #e50914; }
 
-        /* Image Move & Resize Floating Bar */
+        /* Image Control Floating Bar */
         .img-resize-bar { display: none; background: #222638; padding: 8px; border-radius: 6px; margin-bottom: 10px; gap: 6px; align-items: center; border: 1px solid #333a56; flex-wrap: wrap; }
         .img-resize-bar span { font-size: 12px; color: #ffc107; font-weight: 600; }
         .img-resize-bar button { background: #161822; color: #fff; border: 1px solid #333a56; padding: 5px 8px; border-radius: 4px; cursor: pointer; font-size: 12px; display: inline-flex; align-items: center; gap: 3px; }
@@ -63,14 +64,16 @@
             
             <input type="text" id="postTitle" class="form-control" placeholder="Enter Movie Title here..." style="font-size: 18px; padding: 12px; font-weight: bold;">
 
-            <!-- Image Move & Resize Floating Bar -->
+            <!-- Image Control Toolbar -->
             <div id="imgResizeBar" class="img-resize-bar">
-                <span><i class="fa-solid fa-arrows-up-down"></i> Move/Size:</span>
-                <button type="button" onclick="moveImageUp()"><i class="fa-solid fa-arrow-up"></i> Up</button>
-                <button type="button" onclick="moveImageDown()"><i class="fa-solid fa-arrow-down"></i> Down</button>
-                <button type="button" onclick="setImgWidth('50%')">Medium</button>
+                <span><i class="fa-solid fa-sliders"></i> Image Actions:</span>
+                <button type="button" onclick="moveImageUp()"><i class="fa-solid fa-arrow-up"></i> Move Up</button>
+                <button type="button" onclick="moveImageDown()"><i class="fa-solid fa-arrow-down"></i> Move Down</button>
+                <button type="button" onclick="setImgFloat('left')">Text Right (Wrap)</button>
+                <button type="button" onclick="setImgFloat('none')">Center</button>
+                <button type="button" onclick="setImgWidth('40%')">Medium</button>
                 <button type="button" onclick="setImgWidth('100%')">Full</button>
-                <button type="button" onclick="deleteSelectedImage()" style="background:#e50914;"><i class="fa-solid fa-trash"></i></button>
+                <button type="button" onclick="deleteSelectedImage()" style="background:#e50914;"><i class="fa-solid fa-trash"></i> Delete</button>
             </div>
 
             <!-- Advanced Formatting Toolbar -->
@@ -103,7 +106,7 @@
             </div>
 
             <!-- Editable Typing Box -->
-            <div id="editorContent" class="editor-box" contenteditable="true" placeholder="Yahan movie ki poori details type karein. Text select karke size change kar sakte hain..."></div>
+            <div id="editorContent" class="editor-box" contenteditable="true" placeholder="Yahan movie ki poori details type karein. Image par touch karke use Move Up/Down ya Text Right kar sakte hain..."></div>
         </div>
 
         <!-- RIGHT SIDE: ~30% Sidebar Settings -->
@@ -144,7 +147,6 @@
             document.execCommand(cmd, false, value);
         }
 
-        // Fixed Text Size Function using Span selection
         function changeTextSize(size) {
             if (!size) return;
             const selection = window.getSelection();
@@ -167,7 +169,7 @@
                     const editor = document.getElementById('editorContent');
                     editor.focus();
                     
-                    const imgHtml = `<br><img src="${base64}" style="width: 50%;" onclick="selectEditorImage(this)"><br>`;
+                    const imgHtml = `<br><img src="${base64}" draggable="true" style="width: 45%; float: left; margin: 10px;" onclick="selectEditorImage(this)"><br>`;
                     document.execCommand('insertHTML', false, imgHtml);
                     
                     attachImageClickListeners();
@@ -179,6 +181,7 @@
         function attachImageClickListeners() {
             const imgs = document.querySelectorAll('#editorContent img');
             imgs.forEach(img => {
+                img.setAttribute('draggable', 'true');
                 img.onclick = function(e) {
                     e.stopPropagation();
                     imgs.forEach(i => i.classList.remove('selected'));
@@ -199,7 +202,7 @@
 
         function moveImageUp() {
             if (selectedImg) {
-                const prev = selectedImg.previousElementSibling || selectedImg.previousSibling;
+                const prev = selectedImg.previousElementSibling;
                 if (prev) {
                     selectedImg.parentNode.insertBefore(selectedImg, prev);
                 }
@@ -208,14 +211,22 @@
 
         function moveImageDown() {
             if (selectedImg) {
-                const next = selectedImg.nextElementSibling || selectedImg.nextSibling;
+                const next = selectedImg.nextElementSibling;
                 if (next) {
-                    const nextAfter = next.nextElementSibling || next.nextSibling;
-                    if (nextAfter) {
-                        selectedImg.parentNode.insertBefore(selectedImg, nextAfter);
-                    } else {
-                        selectedImg.parentNode.appendChild(selectedImg);
-                    }
+                    selectedImg.parentNode.insertBefore(next, selectedImg);
+                }
+            }
+        }
+
+        function setImgFloat(floatVal) {
+            if (selectedImg) {
+                if(floatVal === 'left') {
+                    selectedImg.style.float = 'left';
+                    selectedImg.style.margin = '10px 15px 10px 0';
+                } else {
+                    selectedImg.style.float = 'none';
+                    selectedImg.style.display = 'block';
+                    selectedImg.style.margin = '10px auto';
                 }
             }
         }
