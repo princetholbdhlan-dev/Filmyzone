@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel - FILMYZONE</title>
+    <link rel="stylesheet" href="../style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <!-- Header / Navbar -->
+    <header>
+        <div class="logo"><i class="fa-solid fa-shield-halved"></i> FILMYZONE Admin</div>
+        <nav id="navMenu">
+            <a href="../index.html">Home</a>
+            <a href="movies.html">Movies</a>
+            <a href="admin.html" class="active">Admin Panel</a>
+        </nav>
+        <div class="hamburger" id="hamburger">
+            <i class="fa-solid fa-bars"></i>
+        </div>
+    </header>
+
+    <!-- Admin Form Section -->
+    <section class="contact-section" style="max-width: 650px; margin: 40px auto;">
+        <h2><i class="fa-solid fa-circle-plus"></i> Add New Movie Post</h2>
+        <form class="contact-form" id="adminMovieForm" onsubmit="addNewMovie(event)">
+            <label style="color: #b3b3b3; font-size: 14px;">Movie Title</label>
+            <input type="text" id="movieTitle" placeholder="e.g. Avengers: Endgame" required>
+
+            <label style="color: #b3b3b3; font-size: 14px;">Select Category</label>
+            <select id="movieCategory" style="background: #161822; border: 1px solid #333a56; padding: 12px; border-radius: 8px; color: white; outline: none; font-size: 14px;" required>
+                <option value="action">Action</option>
+                <option value="sci-fi">Sci-Fi</option>
+                <option value="drama">Drama</option>
+                <option value="horror">Horror</option>
+            </select>
+
+            <label style="color: #b3b3b3; font-size: 14px;">Release Year & Genre Subtitle</label>
+            <input type="text" id="movieGenre" placeholder="e.g. Action / Sci-Fi • 2019" required>
+
+            <label style="color: #b3b3b3; font-size: 14px;">IMDb Rating</label>
+            <input type="text" id="movieRating" placeholder="e.g. 8.4" required>
+
+            <label style="color: #b3b3b3; font-size: 14px;">Poster Image URL</label>
+            <input type="url" id="moviePoster" placeholder="Paste image direct link (Unsplash / ImgBB)" required>
+
+            <label style="color: #b3b3b3; font-size: 14px;">Download Link (Google Drive / Mega)</label>
+            <input type="url" id="movieLink" placeholder="https://example.com/download-link" required>
+
+            <button type="submit" class="btn-primary" style="margin-top: 10px;"><i class="fa-solid fa-upload"></i> Publish Movie</button>
+        </form>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <p>&copy; 2026 FILMYZONE Admin Panel. All rights reserved.</p>
+    </footer>
+
+    <script>
+        function addNewMovie(e) {
+            e.preventDefault();
+            
+            const newMovie = {
+                title: document.getElementById('movieTitle').value,
+                category: document.getElementById('movieCategory').value,
+                genre: document.getElementById('movieGenre').value,
+                rating: document.getElementById('movieRating').value,
+                poster: document.getElementById('moviePoster').value,
+                link: document.getElementById('movieLink').value
+            };
+
+            // Get existing movies from LocalStorage or initialize empty array
+            let movies = JSON.parse(localStorage.getItem('filmyzone_movies')) || [];
+            movies.push(newMovie);
+            localStorage.setItem('filmyzone_movies', JSON.stringify(movies));
+
+            alert('Movie published successfully! Check the Movies page.');
+            document.getElementById('adminMovieForm').reset();
+        }
+    </script>
+</body>
+</html>
