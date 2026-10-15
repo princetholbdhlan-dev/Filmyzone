@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>All Movies - FILMYZONE</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <!-- Header / Navbar -->
+    <header>
+        <div class="logo"><i class="fa-solid fa-film"></i> FILMYZONE</div>
+        <nav id="navMenu">
+            <a href="index.html">Home</a>
+            <a href="movies.html" class="active">Movies</a>
+            <a href="index.html#genres">Genres</a>
+            <a href="index.html#contact">Contact</a>
+        </nav>
+        <div class="search-box">
+            <input type="text" id="searchInput" placeholder="Search movies...">
+            <button><i class="fa-solid fa-search"></i></button>
+        </div>
+        <div class="hamburger" id="hamburger">
+            <i class="fa-solid fa-bars"></i>
+        </div>
+    </header>
+
+    <!-- Movies Catalog Section -->
+    <section class="movies-section">
+        <h2>Complete Movie Library</h2>
+        <div class="filter-buttons">
+            <button class="filter-btn active" data-filter="all">All</button>
+            <button class="filter-btn" data-filter="action">Action</button>
+            <button class="filter-btn" data-filter="sci-fi">Sci-Fi</button>
+            <button class="filter-btn" data-filter="drama">Drama</button>
+            <button class="filter-btn" data-filter="horror">Horror</button>
+        </div>
+        
+        <div class="movie-grid" id="movieGrid">
+            <!-- Movie Card 1 -->
+            <div class="movie-card" data-category="action" data-title="Inception">
+                <div class="movie-poster">
+                    <img src="https://images.unsplash.com/photo-1536440136628-849c177e76a1?auto=format&fit=crop&q=80&w=500" alt="Inception">
+                    <span class="rating"><i class="fa-solid fa-star"></i> 8.8</span>
+                </div>
+                <div class="movie-info">
+                    <h3>Inception</h3>
+                    <p class="genre">Action / Sci-Fi • 2010</p>
+                    <a href="movie-detail.html?movie=inception" class="btn-download"><i class="fa-solid fa-eye"></i> View & Download</a>
+                </div>
+            </div>
+
+            <!-- Movie Card 2 -->
+            <div class="movie-card" data-category="sci-fi" data-title="Interstellar">
+                <div class="movie-poster">
+                    <img src="https://images.unsplash.com/photo-1506703719100-a0f3a48c0f86?auto=format&fit=crop&q=80&w=500" alt="Interstellar">
+                    <span class="rating"><i class="fa-solid fa-star"></i> 8.6</span>
+                </div>
+                <div class="movie-info">
+                    <h3>Interstellar</h3>
+                    <p class="genre">Sci-Fi / Adventure • 2014</p>
+                    <a href="movie-detail.html?movie=interstellar" class="btn-download"><i class="fa-solid fa-eye"></i> View & Download</a>
+                </div>
+            </div>
+
+            <!-- Movie Card 3 -->
+            <div class="movie-card" data-category="action" data-title="The Dark Knight">
+                <div class="movie-poster">
+                    <img src="https://images.unsplash.com/photo-1509198397868-475647b2a1e5?auto=format&fit=crop&q=80&w=500" alt="The Dark Knight">
+                    <span class="rating"><i class="fa-solid fa-star"></i> 9.0</span>
+                </div>
+                <div class="movie-info">
+                    <h3>The Dark Knight</h3>
+                    <p class="genre">Action / Crime • 2008</p>
+                    <a href="movie-detail.html?movie=darkknight" class="btn-download"><i class="fa-solid fa-eye"></i> View & Download</a>
+                </div>
+            </div>
+
+            <!-- Movie Card 4 -->
+            <div class="movie-card" data-category="drama" data-title="The Shawshank Redemption">
+                <div class="movie-poster">
+                    <img src="https://images.unsplash.com/photo-1485846234645-a62644f84728?auto=format&fit=crop&q=80&w=500" alt="Shawshank Redemption">
+                    <span class="rating"><i class="fa-solid fa-star"></i> 9.3</span>
+                </div>
+                <div class="movie-info">
+                    <h3>Shawshank Redemption</h3>
+                    <p class="genre">Drama • 1994</p>
+                    <a href="movie-detail.html?movie=shawshank" class="btn-download"><i class="fa-solid fa-eye"></i> View & Download</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <p>&copy; 2026 FILMYZONE. All rights reserved.</p>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
