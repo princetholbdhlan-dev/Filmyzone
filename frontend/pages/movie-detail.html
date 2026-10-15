@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Movie Details - FILMYZONE</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <!-- Header / Navbar -->
+    <header>
+        <div class="logo"><i class="fa-solid fa-film"></i> FILMYZONE</div>
+        <nav id="navMenu">
+            <a href="index.html">Home</a>
+            <a href="movies.html">Movies</a>
+            <a href="index.html#genres">Genres</a>
+            <a href="index.html#contact">Contact</a>
+        </nav>
+        <div class="hamburger" id="hamburger">
+            <i class="fa-solid fa-bars"></i>
+        </div>
+    </header>
+
+    <!-- Movie Detail Section -->
+    <section class="detail-section" style="padding: 40px 5%;">
+        <div class="detail-container" style="display: flex; gap: 40px; flex-wrap: wrap; align-items: flex-start;">
+            <div class="detail-poster" style="flex: 1; min-width: 280px; max-width: 350px;">
+                <img src="https://images.unsplash.com/photo-1536440136628-849c177e76a1?auto=format&fit=crop&q=80&w=500" alt="Movie Poster" style="width: 100%; border-radius: 12px; border: 1px solid #333a56;">
+            </div>
+            <div class="detail-info" style="flex: 2; min-width: 300px;">
+                <h1 id="movieTitle" style="font-size: 32px; margin-bottom: 10px;">Inception (2010)</h1>
+                <p class="genre" style="font-size: 15px; color: #8c93a8; margin-bottom: 15px;">Action / Sci-Fi • IMDb Rating: ⭐ 8.8 / 10</p>
+                <p style="color: #b3b3b3; line-height: 1.6; margin-bottom: 25px;">
+                    A thief who steals corporate secrets through the use of dream-sharing technology is given the inverse task of planting an idea into the mind of a C.E.O., but his tragic past may doom the project and his team to disaster.
+                </p>
+
+                <h3 style="margin-bottom: 15px; color: #fff;">Download Links (HD Quality)</h3>
+                <div class="download-options" style="display: flex; flex-direction: column; gap: 12px; max-width: 400px;">
+                    <a href="#" class="server-btn" target="_blank"><i class="fa-solid fa-server"></i> Download 1080p HD (2.1 GB)</a>
+                    <a href="#" class="server-btn" target="_blank"><i class="fa-solid fa-cloud-arrow-down"></i> Download 720p HQ (1.2 GB)</a>
+                    <a href="#" class="server-btn" target="_blank"><i class="fa-solid fa-bolt"></i> Fast Direct Link (480p)</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <p>&copy; 2026 FILMYZONE. All rights reserved.</p>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
