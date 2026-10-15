@@ -25,13 +25,13 @@
 
         /* Content Editable Area */
         .editor-box { flex: 1; min-height: 400px; background: #0f1016; border: 1px solid #333a56; border-top: none; border-radius: 0 0 8px 8px; padding: 15px; color: #fff; outline: none; font-size: 15px; line-height: 1.6; overflow-y: auto; }
-        .editor-box img { cursor: pointer; border-radius: 6px; margin: 5px 15px 10px 0; }
+        .editor-box img { cursor: pointer; border-radius: 6px; margin: 10px; display: inline-block; max-width: 100%; }
         .editor-box img.selected { outline: 3px solid #e50914; }
 
-        /* Image Resize Floating Bar */
-        .img-resize-bar { display: none; background: #222638; padding: 8px; border-radius: 6px; margin-bottom: 10px; gap: 8px; align-items: center; border: 1px solid #333a56; flex-wrap: wrap; }
+        /* Image Move & Resize Floating Bar */
+        .img-resize-bar { display: none; background: #222638; padding: 8px; border-radius: 6px; margin-bottom: 10px; gap: 6px; align-items: center; border: 1px solid #333a56; flex-wrap: wrap; }
         .img-resize-bar span { font-size: 12px; color: #ffc107; font-weight: 600; }
-        .img-resize-bar button { background: #161822; color: #fff; border: 1px solid #333a56; padding: 4px 10px; border-radius: 4px; cursor: pointer; font-size: 12px; }
+        .img-resize-bar button { background: #161822; color: #fff; border: 1px solid #333a56; padding: 5px 8px; border-radius: 4px; cursor: pointer; font-size: 12px; display: inline-flex; align-items: center; gap: 3px; }
         .img-resize-bar button:hover { background: #e50914; }
 
         /* Sidebar Form Controls */
@@ -63,12 +63,14 @@
             
             <input type="text" id="postTitle" class="form-control" placeholder="Enter Movie Title here..." style="font-size: 18px; padding: 12px; font-weight: bold;">
 
-            <!-- Image Resize Toolbar (Appears when image inside editor is touched) -->
+            <!-- Image Move & Resize Floating Bar -->
             <div id="imgResizeBar" class="img-resize-bar">
-                <span><i class="fa-solid fa-image"></i> Image Layout:</span>
-                <button type="button" onclick="setImgStyle('35%', 'left')">Left Wrap (Text on Right)</button>
-                <button type="button" onclick="setImgStyle('100%', 'none')">Full Width</button>
-                <button type="button" onclick="deleteSelectedImage()" style="background:#e50914;"><i class="fa-solid fa-trash"></i> Delete</button>
+                <span><i class="fa-solid fa-arrows-up-down"></i> Move/Size:</span>
+                <button type="button" onclick="moveImageUp()"><i class="fa-solid fa-arrow-up"></i> Up</button>
+                <button type="button" onclick="moveImageDown()"><i class="fa-solid fa-arrow-down"></i> Down</button>
+                <button type="button" onclick="setImgWidth('50%')">Medium</button>
+                <button type="button" onclick="setImgWidth('100%')">Full</button>
+                <button type="button" onclick="deleteSelectedImage()" style="background:#e50914;"><i class="fa-solid fa-trash"></i></button>
             </div>
 
             <!-- Advanced Formatting Toolbar -->
@@ -83,10 +85,10 @@
 
                 <select onchange="changeTextSize(this.value); this.selectedIndex=0;">
                     <option value="">Text Size</option>
-                    <option value="1">Size 1</option>
-                    <option value="3">Size 3 (Normal)</option>
-                    <option value="5">Size 5</option>
-                    <option value="7">Size 7</option>
+                    <option value="12px">Chhota (12px)</option>
+                    <option value="16px">Normal (16px)</option>
+                    <option value="20px">Bada (20px)</option>
+                    <option value="24px">Bahut Bada (24px)</option>
                 </select>
 
                 <button type="button" onclick="formatDoc('bold')"><i class="fa-solid fa-bold"></i></button>
@@ -101,7 +103,7 @@
             </div>
 
             <!-- Editable Typing Box -->
-            <div id="editorContent" class="editor-box" contenteditable="true" placeholder="Yahan movie ki poori details type karein. Image add karne ke baad text automatically right side aa jayega..."></div>
+            <div id="editorContent" class="editor-box" contenteditable="true" placeholder="Yahan movie ki poori details type karein. Text select karke size change kar sakte hain..."></div>
         </div>
 
         <!-- RIGHT SIDE: ~30% Sidebar Settings -->
@@ -142,10 +144,18 @@
             document.execCommand(cmd, false, value);
         }
 
-        function changeTextSize(sizeVal) {
-            if(sizeVal) {
-                document.execCommand('fontSize', false, sizeVal);
-            }
+        // Fixed Text Size Function using Span selection
+        function changeTextSize(size) {
+            if (!size) return;
+            const selection = window.getSelection();
+            if (!selection.rangeCount) return;
+            const range = selection.getRangeAt(0);
+            const span = document.createElement('span');
+            span.style.fontSize = size;
+            span.appendChild(range.extractContents());
+            range.insertNode(span);
+            selection.removeAllRanges();
+            selection.addRange(range);
         }
 
         function insertGalleryImage(event) {
@@ -157,8 +167,7 @@
                     const editor = document.getElementById('editorContent');
                     editor.focus();
                     
-                    // Default image with float left so text wraps to the right side
-                    const imgHtml = `<img src="${base64}" style="float: left; width: 38%;" onclick="selectEditorImage(this)">`;
+                    const imgHtml = `<br><img src="${base64}" style="width: 50%;" onclick="selectEditorImage(this)"><br>`;
                     document.execCommand('insertHTML', false, imgHtml);
                     
                     attachImageClickListeners();
@@ -188,16 +197,32 @@
             }
         };
 
-        function setImgStyle(width, floatVal) {
+        function moveImageUp() {
+            if (selectedImg) {
+                const prev = selectedImg.previousElementSibling || selectedImg.previousSibling;
+                if (prev) {
+                    selectedImg.parentNode.insertBefore(selectedImg, prev);
+                }
+            }
+        }
+
+        function moveImageDown() {
+            if (selectedImg) {
+                const next = selectedImg.nextElementSibling || selectedImg.nextSibling;
+                if (next) {
+                    const nextAfter = next.nextElementSibling || next.nextSibling;
+                    if (nextAfter) {
+                        selectedImg.parentNode.insertBefore(selectedImg, nextAfter);
+                    } else {
+                        selectedImg.parentNode.appendChild(selectedImg);
+                    }
+                }
+            }
+        }
+
+        function setImgWidth(width) {
             if (selectedImg) {
                 selectedImg.style.width = width;
-                selectedImg.style.float = floatVal;
-                if(floatVal === 'none') {
-                    selectedImg.style.margin = '10px auto';
-                    selectedImg.style.display = 'block';
-                } else {
-                    selectedImg.style.margin = '5px 15px 10px 0';
-                }
             }
         }
 
@@ -212,3 +237,49 @@
         function previewMainPoster(event) {
             const file = event.target.files[0];
             if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const base64 = e.target.result;
+                    document.getElementById('moviePosterBase64').value = base64;
+                    const preview = document.getElementById('posterPreview');
+                    preview.src = base64;
+                    preview.style.display = 'block';
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function publishPost() {
+            const title = document.getElementById('postTitle').value;
+            const category = document.getElementById('movieCategory').value;
+            const rating = document.getElementById('movieRating').value;
+            const genre = document.getElementById('movieGenre').value;
+            const poster = document.getElementById('moviePosterBase64').value;
+            const link = document.getElementById('movieLink').value;
+            const description = document.getElementById('editorContent').innerHTML;
+
+            if (!title || !poster || !link) {
+                alert('Kripya Title, Main Poster aur Download Link zaroor bharein!');
+                return;
+            }
+
+            const movieData = {
+                title,
+                category,
+                rating: rating || '8.0',
+                genre: genre || 'Movie • 2026',
+                poster,
+                link,
+                description
+            };
+
+            let movies = JSON.parse(localStorage.getItem('filmyzone_movies')) || [];
+            movies.push(movieData);
+            localStorage.setItem('filmyzone_movies', JSON.stringify(movies));
+
+            alert('Movie post safaltapoorvak publish ho gayi hai!');
+            window.location.href = 'movies.html';
+        }
+    </script>
+</body>
+</html>
