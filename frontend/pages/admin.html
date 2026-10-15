@@ -3,181 +3,37 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Advanced Admin Editor - FILMYZONE</title>
+    <title>Blogger Style Editor - FILMYZONE Admin</title>
     <link rel="stylesheet" href="../style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        .editor-container { max-width: 800px; margin: 30px auto; background: #161822; padding: 25px; border-radius: 12px; border: 1px solid #333a56; }
-        .form-group { margin-bottom: 20px; display: flex; flex-direction: column; gap: 8px; }
-        .form-group label { color: #b3b3b3; font-size: 14px; font-weight: 600; }
-        .form-group input, .form-group select, .form-group textarea { background: #0f1016; border: 1px solid #333a56; padding: 12px; border-radius: 8px; color: white; outline: none; font-size: 14px; }
-        .form-group input:focus, .form-group select:focus, .form-group textarea:focus { border-color: #e50914; }
+        body { background-color: #0f1016; color: #fff; margin: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        .admin-layout { display: flex; height: calc(100vh - 60px); flex-direction: row; }
+        @media(max-width: 768px) { .admin-layout { flex-direction: column; height: auto; } }
         
-        .image-builder-box { background: #0f1016; border: 1px dashed #333a56; padding: 15px; border-radius: 8px; margin-bottom: 10px; }
-        .image-controls { display: grid; grid-template-columns: 2fr 1fr 1fr auto; gap: 10px; margin-top: 8px; }
-        @media(max-width: 768px) { .image-controls { grid-template-columns: 1fr; } }
+        /* Main Editor Section */
+        .editor-main { flex: 3; padding: 20px; display: flex; flex-direction: column; border-right: 1px solid #222638; background: #161822; }
+        .post-title-input { width: 100%; background: transparent; border: none; border-bottom: 1px solid #333a56; font-size: 24px; color: white; padding: 10px 0; outline: none; margin-bottom: 15px; font-weight: bold; }
         
-        .btn-secondary { background: #222638; color: white; border: 1px solid #333a56; padding: 8px 15px; border-radius: 6px; cursor: pointer; font-weight: 600; }
-        .btn-secondary:hover { background: #333a56; }
-        .btn-danger { background: #e50914; color: white; border: none; padding: 8px 12px; border-radius: 6px; cursor: pointer; }
+        /* Toolbar */
+        .editor-toolbar { display: flex; flex-wrap: wrap; gap: 8px; background: #0f1016; padding: 10px; border-radius: 8px 8px 0 0; border: 1px solid #333a56; border-bottom: none; }
+        .toolbar-btn { background: #161822; color: #b3b3b3; border: 1px solid #333a56; padding: 6px 10px; border-radius: 4px; cursor: pointer; font-size: 14px; }
+        .toolbar-btn:hover { background: #e50914; color: white; border-color: #e50914; }
+
+        /* Content Editable Area */
+        .editor-textarea { flex: 1; min-height: 350px; background: #0f1016; border: 1px solid #333a56; border-radius: 0 0 8px 8px; padding: 15px; color: #fff; outline: none; overflow-y: auto; font-size: 15px; line-height: 1.6; }
+        
+        /* Sidebar Settings */
+        .editor-sidebar { flex: 1; background: #161822; padding: 20px; overflow-y: auto; border-left: 1px solid #222638; }
+        .sidebar-section { margin-bottom: 20px; border-bottom: 1px solid #222638; padding-bottom: 15px; }
+        .sidebar-section h3 { font-size: 15px; margin-bottom: 10px; color: #e50914; display: flex; align-items: center; gap: 8px; }
+        .form-control { width: 100%; background: #0f1016; border: 1px solid #333a56; padding: 10px; border-radius: 6px; color: white; outline: none; font-size: 13px; margin-top: 5px; margin-bottom: 12px; }
+        .form-control:focus { border-color: #e50914; }
+        
+        .publish-top-btn { background: #e50914; color: white; border: none; padding: 8px 20px; border-radius: 20px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 6px; }
+        .publish-top-btn:hover { background: #b20710; }
     </style>
 </head>
 <body>
     <!-- Header / Navbar -->
-    <header>
-        <div class="logo"><i class="fa-solid fa-pen-nib"></i> FILMYZONE Editor</div>
-        <nav id="navMenu">
-            <a href="../index.html">Home</a>
-            <a href="movies.html">Movies</a>
-            <a href="admin.html" class="active">Admin Editor</a>
-        </nav>
-        <div class="hamburger" id="hamburger">
-            <i class="fa-solid fa-bars"></i>
-        </div>
-    </header>
-
-    <!-- Advanced Editor Form -->
-    <div class="editor-container">
-        <h2><i class="fa-solid fa-sliders"></i> Advanced Movie Post Editor</h2>
-        <p style="color: #8c93a8; font-size: 13px; margin-bottom: 20px;">Yahan aap movie ki poori details, multiple screenshots aur unki size/location customize karke publish kar sakte hain.</p>
-        
-        <form id="advancedAdminForm" onsubmit="publishAdvancedMovie(event)">
-            
-            <div class="form-group">
-                <label>Movie Title</label>
-                <input type="text" id="movieTitle" placeholder="e.g. Avatar: The Way of Water" required>
-            </div>
-
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
-                <div class="form-group">
-                    <label>Category</label>
-                    <select id="movieCategory" required>
-                        <option value="action">Action</option>
-                        <option value="sci-fi">Sci-Fi</option>
-                        <option value="drama">Drama</option>
-                        <option value="horror">Horror</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label>IMDb Rating</label>
-                    <input type="text" id="movieRating" placeholder="e.g. 7.9" required>
-                </div>
-            </div>
-
-            <div class="form-group">
-                <label>Genre & Year Subtitle</label>
-                <input type="text" id="movieGenre" placeholder="e.g. Sci-Fi / Action • 2022" required>
-            </div>
-
-            <div class="form-group">
-                <label>Main Poster Image URL</label>
-                <input type="url" id="moviePoster" placeholder="Main cover poster link" required>
-            </div>
-
-            <div class="form-group">
-                <label>Movie Story / Description</label>
-                <textarea id="movieDesc" rows="4" placeholder="Write full movie review or summary here..." required></textarea>
-            </div>
-
-            <!-- Multiple Images Section with Size & Location Control -->
-            <div class="form-group">
-                <label><i class="fa-solid fa-images"></i> Additional Screenshots / Images (Multiple add karein)</label>
-                <div id="imageFieldsContainer"></div>
-                <button type="button" class="btn-secondary" onclick="addImageField()" style="margin-top: 5px;"><i class="fa-solid fa-plus"></i> Add Another Image</button>
-            </div>
-
-            <div class="form-group">
-                <label>Download Link (Google Drive / Mega)</label>
-                <input type="url" id="movieLink" placeholder="https://example.com/download" required>
-            </div>
-
-            <button type="submit" class="btn-primary" style="width: 100%; justify-content: center; padding: 12px; font-size: 16px; margin-top: 10px;">
-                <i class="fa-solid fa-cloud-arrow-up"></i> Publish Movie Post
-            </button>
-        </form>
-    </div>
-
-    <!-- Footer -->
-    <footer>
-        <p>&copy; 2026 FILMYZONE Admin. All rights reserved.</p>
-    </footer>
-
-    <script>
-        // Dynamic Image Field Adder with Size & Alignment controls
-        function addImageField() {
-            const container = document.getElementById('imageFieldsContainer');
-            const box = document.createElement('div');
-            box.className = 'image-builder-box';
-            
-            box.innerHTML = `
-                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:5px;">
-                    <span style="font-size:12px; color:#b3b3b3;">Image Setup</span>
-                    <button type="button" class="btn-danger" onclick="this.parentElement.parentElement.remove()"><i class="fa-solid fa-trash"></i></button>
-                </div>
-                <input type="url" class="img-url-input" placeholder="Paste Image URL here..." style="width:100%; background:#161822; border:1px solid #333a56; padding:8px; border-radius:6px; color:white;" required>
-                <div class="image-controls">
-                    <div>
-                        <label style="font-size:11px; color:#8c93a8;">Width Size</label>
-                        <select class="img-size-select" style="width:100%; background:#161822; border:1px solid #333a56; padding:6px; border-radius:6px; color:white; font-size:12px;">
-                            <option value="100%">Full Width (100%)</option>
-                            <option value="75%">Medium (75%)</option>
-                            <option value="50%">Half (50%)</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label style="font-size:11px; color:#8c93a8;">Alignment (Location)</label>
-                        <select class="img-align-select" style="width:100%; background:#161822; border:1px solid #333a56; padding:6px; border-radius:6px; color:white; font-size:12px;">
-                            <option value="center">Center</option>
-                            <option value="left">Left</option>
-                            <option value="right">Right</option>
-                        </select>
-                    </div>
-                </div>
-            `;
-            container.appendChild(box);
-        }
-
-        // Publish Handler
-        function publishAdvancedMovie(e) {
-            e.preventDefault();
-
-            // Collect all custom images with their size and alignment settings
-            const imageBoxes = document.querySelectorAll('.image-builder-box');
-            let screenshots = [];
-            imageBoxes.forEach(box => {
-                const url = box.querySelector('.img-url-input').value;
-                const width = box.querySelector('.img-size-select').value;
-                const align = box.querySelector('.img-align-select').value;
-                if(url) {
-                    screenshots.push({ url, width, align });
-                }
-            });
-
-            const movieData = {
-                title: document.getElementById('movieTitle').value,
-                category: document.getElementById('movieCategory').value,
-                rating: document.getElementById('movieRating').value,
-                genre: document.getElementById('movieGenre').value,
-                poster: document.getElementById('moviePoster').value,
-                description: document.getElementById('movieDesc').value,
-                screenshots: screenshots,
-                link: document.getElementById('movieLink').value
-            };
-
-            // Save to LocalStorage
-            let movies = JSON.parse(localStorage.getItem('filmyzone_movies')) || [];
-            movies.push(movieData);
-            localStorage.setItem('filmyzone_movies', JSON.stringify(movies));
-
-            alert('Movie post successfully published with custom images & layout!');
-            document.getElementById('advancedAdminForm').reset();
-            document.getElementById('imageFieldsContainer').innerHTML = '';
-        }
-
-        // Add default one image box on load
-        window.onload = function() {
-            addImageField();
-        }
-    </script>
-</body>
-</html>
+    <header style="display:flex; justify-content:space-between; align-items:center; padding: 12px 20
