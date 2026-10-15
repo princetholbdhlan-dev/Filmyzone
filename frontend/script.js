@@ -2,25 +2,84 @@
 const hamburger = document.getElementById('hamburger');
 const navMenu = document.getElementById('navMenu');
 
-hamburger.addEventListener('click', () => {
-    navMenu.classList.toggle('active');
+if (hamburger && navMenu) {
+    hamburger.addEventListener('click', () => {
+        navMenu.classList.toggle('active');
+    });
+}
+
+// Load Movies dynamically including LocalStorage Admin posts
+document.addEventListener('DOMContentLoaded', () => {
+    loadDynamicMovies();
 });
+
+function loadDynamicMovies() {
+    const movieGrid = document.getElementById('movieGrid');
+    if (!movieGrid) return;
+
+    // Default movies
+    const defaultMovies = [
+        {
+            title: "Inception",
+            category: "action",
+            genre: "Action / Sci-Fi • 2010",
+            rating: "8.8",
+            poster: "https://images.unsplash.com/photo-1536440136628-849c177e76a1?auto=format&fit=crop&q=80&w=500",
+            link: "#"
+        },
+        {
+            title: "Interstellar",
+            category: "sci-fi",
+            genre: "Sci-Fi / Adventure • 2014",
+            rating: "8.6",
+            poster: "https://images.unsplash.com/photo-1506703719100-a0f3a48c0f86?auto=format&fit=crop&q=80&w=500",
+            link: "#"
+        }
+    ];
+
+    // Get admin added movies from LocalStorage
+    const adminMovies = JSON.parse(localStorage.getItem('filmyzone_movies')) || [];
+    const allMovies = [...defaultMovies, ...adminMovies];
+
+    movieGrid.innerHTML = '';
+
+    allMovies.forEach(movie => {
+        const card = document.createElement('div');
+        card.className = 'movie-card';
+        card.setAttribute('data-category', movie.category);
+        card.setAttribute('data-title', movie.title);
+
+        card.innerHTML = `
+            <div class="movie-poster">
+                <img src="${movie.poster}" alt="${movie.title}">
+                <span class="rating"><i class="fa-solid fa-star"></i> ${movie.rating}</span>
+            </div>
+            <div class="movie-info">
+                <h3>${movie.title}</h3>
+                <p class="genre">${movie.genre}</p>
+                <button class="btn-download" onclick="openDownloadModal('${movie.title}', '2.1 GB', '${movie.link}')"><i class="fa-solid fa-download"></i> Download</button>
+            </div>
+        `;
+        movieGrid.appendChild(card);
+    });
+}
 
 // Search functionality
 const searchInput = document.getElementById('searchInput');
-const movieCards = document.querySelectorAll('.movie-card');
-
-searchInput.addEventListener('input', (e) => {
-    const term = e.target.value.toLowerCase();
-    movieCards.forEach(card => {
-        const title = card.getAttribute('data-title').toLowerCase();
-        if (title.includes(term)) {
-            card.style.display = 'block';
-        } else {
-            card.style.display = 'none';
-        }
+if (searchInput) {
+    searchInput.addEventListener('input', (e) => {
+        const term = e.target.value.toLowerCase();
+        const movieCards = document.querySelectorAll('.movie-card');
+        movieCards.forEach(card => {
+            const title = card.getAttribute('data-title').toLowerCase();
+            if (title.includes(term)) {
+                card.style.display = 'block';
+            } else {
+                card.style.display = 'none';
+            }
+        });
     });
-});
+}
 
 // Category Filter functionality
 const filterBtns = document.querySelectorAll('.filter-btn');
@@ -34,19 +93,8 @@ filterBtns.forEach(btn => {
     });
 });
 
-function filterByGenre(genre) {
-    filterBtns.forEach(b => {
-        if(b.getAttribute('data-filter') === genre) {
-            b.classList.add('active');
-        } else {
-            b.classList.remove('active');
-        }
-    });
-    filterMovies(genre);
-    window.location.href = '#movies';
-}
-
 function filterMovies(filter) {
+    const movieCards = document.querySelectorAll('.movie-card');
     movieCards.forEach(card => {
         const category = card.getAttribute('data-category');
         if (filter === 'all' || category === filter) {
@@ -65,15 +113,19 @@ const server1Btn = document.getElementById('server1Btn');
 const server2Btn = document.getElementById('server2Btn');
 
 function openDownloadModal(title, size, link) {
-    modalTitle.innerText = `Download: ${title}`;
-    fileSize.innerText = size;
-    server1Btn.href = link;
-    server2Btn.href = link;
-    modal.style.display = 'flex';
+    if (modal) {
+        modalTitle.innerText = `Download: ${title}`;
+        fileSize.innerText = size;
+        server1Btn.href = link;
+        server2Btn.href = link;
+        modal.style.display = 'flex';
+    }
 }
 
 function closeDownloadModal() {
-    modal.style.display = 'none';
+    if (modal) {
+        modal.style.display = 'none';
+    }
 }
 
 window.onclick = function(event) {
@@ -86,6 +138,6 @@ window.onclick = function(event) {
 function handleContact(e) {
     e.preventDefault();
     const name = document.getElementById('contactName').value;
-    alert(`Thank you ${name}! Your request/message has been sent successfully.`);
+    alert(`Thank you ${name}! Your request has been sent successfully.`);
     document.getElementById('contactForm').reset();
 }
