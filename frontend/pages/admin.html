@@ -94,7 +94,7 @@
                 <button type="button" onclick="formatDoc('italic')"><i class="fa-solid fa-italic"></i></button>
                 <button type="button" onclick="formatDoc('underline')"><i class="fa-solid fa-underline"></i></button>
                 
-                <!-- Working Add Image Label for Gallery -->
+                <!-- Fixed Add Image Label for Gallery -->
                 <label class="toolbar-btn">
                     <i class="fa-solid fa-image"></i> Add Image
                     <input type="file" accept="image/*" style="display:none;" onchange="insertGalleryImage(event)">
@@ -156,7 +156,12 @@
                 reader.onload = function(e) {
                     const base64 = e.target.result;
                     const editor = document.getElementById('editorContent');
-                    editor.innerHTML += `<br><img src="${base64}" style="width:100%;" onclick="selectEditorImage(this)"><br>`;
+                    editor.focus();
+                    
+                    // Safely insert HTML at current cursor position using execCommand
+                    const imgHtml = `<br><img src="${base64}" style="width:100%;"><br>`;
+                    document.execCommand('insertHTML', false, imgHtml);
+                    
                     attachImageClickListeners();
                 };
                 reader.readAsDataURL(file);
