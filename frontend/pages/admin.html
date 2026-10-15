@@ -3,37 +3,116 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Blogger Style Editor - FILMYZONE Admin</title>
+    <title>Admin Panel - FILMYZONE</title>
     <link rel="stylesheet" href="../style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         body { background-color: #0f1016; color: #fff; margin: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-        .admin-layout { display: flex; height: calc(100vh - 60px); flex-direction: row; }
-        @media(max-width: 768px) { .admin-layout { flex-direction: column; height: auto; } }
-        
-        /* Main Editor Section */
-        .editor-main { flex: 3; padding: 20px; display: flex; flex-direction: column; border-right: 1px solid #222638; background: #161822; }
-        .post-title-input { width: 100%; background: transparent; border: none; border-bottom: 1px solid #333a56; font-size: 24px; color: white; padding: 10px 0; outline: none; margin-bottom: 15px; font-weight: bold; }
-        
-        /* Toolbar */
-        .editor-toolbar { display: flex; flex-wrap: wrap; gap: 8px; background: #0f1016; padding: 10px; border-radius: 8px 8px 0 0; border: 1px solid #333a56; border-bottom: none; }
-        .toolbar-btn { background: #161822; color: #b3b3b3; border: 1px solid #333a56; padding: 6px 10px; border-radius: 4px; cursor: pointer; font-size: 14px; }
-        .toolbar-btn:hover { background: #e50914; color: white; border-color: #e50914; }
-
-        /* Content Editable Area */
-        .editor-textarea { flex: 1; min-height: 350px; background: #0f1016; border: 1px solid #333a56; border-radius: 0 0 8px 8px; padding: 15px; color: #fff; outline: none; overflow-y: auto; font-size: 15px; line-height: 1.6; }
-        
-        /* Sidebar Settings */
-        .editor-sidebar { flex: 1; background: #161822; padding: 20px; overflow-y: auto; border-left: 1px solid #222638; }
-        .sidebar-section { margin-bottom: 20px; border-bottom: 1px solid #222638; padding-bottom: 15px; }
-        .sidebar-section h3 { font-size: 15px; margin-bottom: 10px; color: #e50914; display: flex; align-items: center; gap: 8px; }
-        .form-control { width: 100%; background: #0f1016; border: 1px solid #333a56; padding: 10px; border-radius: 6px; color: white; outline: none; font-size: 13px; margin-top: 5px; margin-bottom: 12px; }
+        .container { max-width: 800px; margin: 20px auto; padding: 15px; }
+        .card { background: #161822; border: 1px solid #333a56; border-radius: 12px; padding: 20px; margin-bottom: 20px; }
+        .form-control { width: 100%; background: #0f1016; border: 1px solid #333a56; padding: 12px; border-radius: 8px; color: white; outline: none; font-size: 14px; margin-top: 5px; margin-bottom: 15px; box-sizing: border-box; }
         .form-control:focus { border-color: #e50914; }
-        
-        .publish-top-btn { background: #e50914; color: white; border: none; padding: 8px 20px; border-radius: 20px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 6px; }
-        .publish-top-btn:hover { background: #b20710; }
+        label { color: #b3b3b3; font-size: 14px; font-weight: 600; display: block; margin-top: 10px; }
+        .editor-box { min-height: 200px; background: #0f1016; border: 1px solid #333a56; border-radius: 0 0 8px 8px; padding: 15px; color: #fff; outline: none; font-size: 15px; margin-bottom: 15px; }
+        .toolbar { display: flex; flex-wrap: wrap; gap: 8px; background: #0f1016; padding: 8px; border: 1px solid #333a56; border-bottom: none; border-radius: 8px 8px 0 0; margin-top: 10px; }
+        .toolbar-btn { background: #161822; color: #b3b3b3; border: 1px solid #333a56; padding: 6px 12px; border-radius: 4px; cursor: pointer; }
+        .toolbar-btn:hover { background: #e50914; color: white; }
+        .btn-publish { width: 100%; background: #e50914; color: white; border: none; padding: 14px; border-radius: 8px; font-weight: bold; font-size: 16px; cursor: pointer; margin-top: 10px; }
+        .btn-publish:hover { background: #b20710; }
     </style>
 </head>
 <body>
-    <!-- Header / Navbar -->
-    <header style="display:flex; justify-content:space-between; align-items:center; padding: 12px 20
+    <header style="display:flex; justify-content:space-between; align-items:center; padding: 15px 5%; background:#161822; border-bottom:1px solid #222638;">
+        <div class="logo" style="color:#e50914; font-weight:bold; font-size:18px;"><i class="fa-solid fa-film"></i> FILMYZONE Admin</div>
+        <div>
+            <a href="../index.html" style="color:#b3b3b3; text-decoration:none; margin-right:15px; font-size:14px;">Home</a>
+            <a href="movies.html" style="color:#b3b3b3; text-decoration:none; font-size:14px;">Movies</a>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="card">
+            <h2><i class="fa-solid fa-pen-to-square"></i> Create Movie Post</h2>
+            
+            <label>Movie Title</label>
+            <input type="text" id="postTitle" class="form-control" placeholder="e.g. Inception">
+
+            <label>Category</label>
+            <select id="movieCategory" class="form-control">
+                <option value="action">Action</option>
+                <option value="sci-fi">Sci-Fi</option>
+                <option value="drama">Drama</option>
+                <option value="horror">Horror</option>
+            </select>
+
+            <label>IMDb Rating</label>
+            <input type="text" id="movieRating" class="form-control" placeholder="e.g. 8.8">
+
+            <label>Genre & Year</label>
+            <input type="text" id="movieGenre" class="form-control" placeholder="e.g. Action / Sci-Fi • 2010">
+
+            <label>Main Poster Image URL</label>
+            <input type="url" id="moviePoster" class="form-control" placeholder="https://image-link.com">
+
+            <label>Download Link</label>
+            <input type="url" id="movieLink" class="form-control" placeholder="https://download-link.com">
+
+            <label>Movie Description & Details</label>
+            <div class="toolbar">
+                <button type="button" class="toolbar-btn" onclick="formatText('bold')"><i class="fa-solid fa-bold"></i></button>
+                <button type="button" class="toolbar-btn" onclick="formatText('italic')"><i class="fa-solid fa-italic"></i></button>
+                <button type="button" class="toolbar-btn" onclick="formatText('underline')"><i class="fa-solid fa-underline"></i></button>
+                <button type="button" class="toolbar-btn" onclick="insertImage()"><i class="fa-solid fa-image"></i> Image</button>
+            </div>
+            <div id="editorContent" class="editor-box" contenteditable="true" placeholder="Movie ke baare mein yahan likhein..."></div>
+
+            <button type="button" class="btn-publish" onclick="publishPost()"><i class="fa-solid fa-paper-plane"></i> Publish Post</button>
+        </div>
+    </div>
+
+    <script>
+        function formatText(command) {
+            document.execCommand(command, false, null);
+        }
+
+        function insertImage() {
+            const url = prompt("Enter Image URL:");
+            if (url) {
+                document.execCommand('insertImage', false, url);
+            }
+        }
+
+        function publishPost() {
+            const title = document.getElementById('postTitle').value;
+            const category = document.getElementById('movieCategory').value;
+            const rating = document.getElementById('movieRating').value;
+            const genre = document.getElementById('movieGenre').value;
+            const poster = document.getElementById('moviePoster').value;
+            const link = document.getElementById('movieLink').value;
+            const description = document.getElementById('editorContent').innerHTML;
+
+            if (!title || !poster || !link) {
+                alert('Please fill Title, Poster URL and Download Link!');
+                return;
+            }
+
+            const movieData = {
+                title,
+                category,
+                rating: rating || '8.0',
+                genre: genre || 'Movie • 2026',
+                poster,
+                link,
+                description
+            };
+
+            let movies = JSON.parse(localStorage.getItem('filmyzone_movies')) || [];
+            movies.push(movieData);
+            localStorage.setItem('filmyzone_movies', JSON.stringify(movies));
+
+            alert('Movie Post Published Successfully!');
+            window.location.href = 'movies.html';
+        }
+    </script>
+</body>
+</html>
