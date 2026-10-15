@@ -3,42 +3,100 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Panel - FILMYZONE</title>
+    <title>Advanced Admin Editor - FILMYZONE</title>
     <link rel="stylesheet" href="../style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         body { background-color: #0f1016; color: #fff; margin: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-        .container { max-width: 800px; margin: 20px auto; padding: 15px; }
-        .card { background: #161822; border: 1px solid #333a56; border-radius: 12px; padding: 20px; margin-bottom: 20px; }
-        .form-control { width: 100%; background: #0f1016; border: 1px solid #333a56; padding: 12px; border-radius: 8px; color: white; outline: none; font-size: 14px; margin-top: 5px; margin-bottom: 15px; box-sizing: border-box; }
+        
+        /* Main Split Layout */
+        .admin-wrapper { display: flex; min-height: calc(100vh - 60px); }
+        .editor-container { flex: 7; padding: 25px; background: #161822; border-right: 1px solid #222638; display: flex; flex-direction: column; }
+        .sidebar-container { flex: 3; padding: 25px; background: #161822; overflow-y: auto; }
+        
+        @media(max-width: 900px) {
+            .admin-wrapper { flex-direction: column; }
+        }
+
+        /* Toolbar styling */
+        .toolbar { display: flex; flex-wrap: wrap; gap: 6px; background: #0f1016; padding: 10px; border: 1px solid #333a56; border-radius: 8px 8px 0 0; align-items: center; }
+        .toolbar button, .toolbar select { background: #161822; color: #b3b3b3; border: 1px solid #333a56; padding: 6px 10px; border-radius: 4px; cursor: pointer; font-size: 13px; outline: none; }
+        .toolbar button:hover, .toolbar select:hover { background: #e50914; color: white; border-color: #e50914; }
+
+        /* Content Editable Area */
+        .editor-box { flex: 1; min-height: 400px; background: #0f1016; border: 1px solid #333a56; border-top: none; border-radius: 0 0 8px 8px; padding: 15px; color: #fff; outline: none; font-size: 15px; line-height: 1.6; overflow-y: auto; }
+        .editor-box img { max-width: 100%; cursor: pointer; border-radius: 6px; margin: 10px 0; display: block; }
+        .editor-box img.selected { outline: 3px solid #e50914; }
+
+        /* Image Resize Floating Bar */
+        .img-resize-bar { display: none; background: #222638; padding: 8px; border-radius: 6px; margin-bottom: 10px; gap: 8px; align-items: center; border: 1px solid #333a56; }
+        .img-resize-bar span { font-size: 12px; color: #ffc107; font-weight: 600; }
+        .img-resize-bar button { background: #161822; color: #fff; border: 1px solid #333a56; padding: 4px 10px; border-radius: 4px; cursor: pointer; font-size: 12px; }
+        .img-resize-bar button:hover { background: #e50914; }
+
+        /* Sidebar Form Controls */
+        .form-control { width: 100%; background: #0f1016; border: 1px solid #333a56; padding: 10px; border-radius: 8px; color: white; outline: none; font-size: 14px; margin-top: 5px; margin-bottom: 15px; box-sizing: border-box; }
         .form-control:focus { border-color: #e50914; }
-        label { color: #b3b3b3; font-size: 14px; font-weight: 600; display: block; margin-top: 10px; }
-        .editor-box { min-height: 200px; background: #0f1016; border: 1px solid #333a56; border-radius: 0 0 8px 8px; padding: 15px; color: #fff; outline: none; font-size: 15px; margin-bottom: 15px; }
-        .toolbar { display: flex; flex-wrap: wrap; gap: 8px; background: #0f1016; padding: 8px; border: 1px solid #333a56; border-bottom: none; border-radius: 8px 8px 0 0; margin-top: 10px; }
-        .toolbar-btn { background: #161822; color: #b3b3b3; border: 1px solid #333a56; padding: 6px 12px; border-radius: 4px; cursor: pointer; }
-        .toolbar-btn:hover { background: #e50914; color: white; }
-        .btn-publish { width: 100%; background: #e50914; color: white; border: none; padding: 14px; border-radius: 8px; font-weight: bold; font-size: 16px; cursor: pointer; margin-top: 10px; }
+        label { color: #b3b3b3; font-size: 13px; font-weight: 600; display: block; margin-top: 10px; }
+        
+        .btn-publish { width: 100%; background: #e50914; color: white; border: none; padding: 14px; border-radius: 8px; font-weight: bold; font-size: 15px; cursor: pointer; margin-top: 15px; }
         .btn-publish:hover { background: #b20710; }
-        .preview-img { width: 100px; height: 140px; object-fit: cover; border-radius: 6px; margin-top: 5px; display: none; border: 1px solid #333a56; }
+        .preview-img { width: 90px; height: 120px; object-fit: cover; border-radius: 6px; margin-top: 5px; display: none; border: 1px solid #333a56; }
     </style>
 </head>
 <body>
-    <header style="display:flex; justify-content:space-between; align-items:center; padding: 15px 5%; background:#161822; border-bottom:1px solid #222638;">
-        <div class="logo" style="color:#e50914; font-weight:bold; font-size:18px;"><i class="fa-solid fa-film"></i> FILMYZONE Admin</div>
+    <!-- Header Navbar -->
+    <header style="display:flex; justify-content:space-between; align-items:center; padding: 12px 25px; background:#161822; border-bottom:1px solid #222638;">
+        <div class="logo" style="color:#e50914; font-weight:bold; font-size:18px;"><i class="fa-solid fa-blog"></i> FILMYZONE Studio</div>
         <div>
             <a href="../index.html" style="color:#b3b3b3; text-decoration:none; margin-right:15px; font-size:14px;">Home</a>
             <a href="movies.html" style="color:#b3b3b3; text-decoration:none; font-size:14px;">Movies</a>
         </div>
     </header>
 
-    <div class="container">
-        <div class="card">
-            <h2><i class="fa-solid fa-pen-to-square"></i> Create Movie Post</h2>
+    <!-- Main Split Layout Wrapper -->
+    <div class="admin-wrapper">
+        
+        <!-- LEFT SIDE: ~70% Editor Workspace -->
+        <div class="editor-container">
+            <h2 style="font-size: 20px; margin-bottom: 15px; border-left: 4px solid #e50914; padding-left: 10px;">Movie Content & Screenshots Editor</h2>
             
-            <label>Movie Title</label>
-            <input type="text" id="postTitle" class="form-control" placeholder="e.g. Inception">
+            <input type="text" id="postTitle" class="form-control" placeholder="Enter Movie Title here..." style="font-size: 18px; padding: 12px; font-weight: bold;">
 
-            <label>Category</label>
+            <!-- Image Resize Toolbar (Appears when image inside editor is touched/clicked) -->
+            <div id="imgResizeBar" class="img-resize-bar">
+                <span><i class="fa-solid fa-image"></i> Image Selected:</span>
+                <button type="button" onclick="resizeSelectedImage('25%')">Small</button>
+                <button type="button" onclick="resizeSelectedImage('50%')">Medium</button>
+                <button type="button" onclick="resizeSelectedImage('100%')">Full</button>
+                <button type="button" onclick="deleteSelectedImage()" style="background:#e50914;"><i class="fa-solid fa-trash"></i></button>
+            </div>
+
+            <!-- Advanced Formatting Toolbar -->
+            <div class="toolbar">
+                <select onchange="formatDoc('formatBlock', this.value); this.selectedIndex=0;">
+                    <option value="">Style</option>
+                    <option value="p">Paragraph</option>
+                    <option value="h1">Heading 1</option>
+                    <option value="h2">Heading 2</option>
+                    <option value="h3">Heading 3</option>
+                </select>
+                <button type="button" onclick="formatDoc('bold')"><i class="fa-solid fa-bold"></i></button>
+                <button type="button" onclick="formatDoc('italic')"><i class="fa-solid fa-italic"></i></button>
+                <button type="button" onclick="formatDoc('underline')"><i class="fa-solid fa-underline"></i></button>
+                <button type="button" onclick="triggerImageUpload()"><i class="fa-solid fa-image"></i> Add Image</button>
+                <input type="file" id="hiddenGalleryInput" accept="image/*" style="display:none;" onchange="insertGalleryImage(event)">
+            </div>
+
+            <!-- Editable Typing Box -->
+            <div id="editorContent" class="editor-box" contenteditable="true" placeholder="Yahan movie ki poori details type karein aur gallery se images add karein..."></div>
+        </div>
+
+        <!-- RIGHT SIDE: ~30% Sidebar Settings -->
+        <div class="sidebar-container">
+            <h3 style="font-size: 16px; margin-bottom: 15px; color: #fff; border-bottom: 1px solid #333a56; padding-bottom: 8px;"><i class="fa-solid fa-gear"></i> Post Settings</h3>
+
+            <label>Category / Genre Type</label>
             <select id="movieCategory" class="form-control">
                 <option value="action">Action</option>
                 <option value="sci-fi">Sci-Fi</option>
@@ -49,74 +107,106 @@
             <label>IMDb Rating</label>
             <input type="text" id="movieRating" class="form-control" placeholder="e.g. 8.8">
 
-            <label>Genre & Year</label>
-            <input type="text" id="movieGenre" class="form-control" placeholder="e.g. Action / Sci-Fi • 2010">
+            <label>Genre & Year Subtitle</label>
+            <input type="text" id="movieGenre" class="form-control" placeholder="e.g. Action / Sci-Fi • 2026">
 
-            <label>Main Poster (Upload from Gallery)</label>
-            <input type="file" id="posterFileInput" class="form-control" accept="image/*" onchange="previewMainPoster(event)">
+            <label>Main Poster (Gallery Upload)</label>
+            <input type="file" class="form-control" accept="image/*" onchange="previewMainPoster(event)" style="padding: 6px;">
             <img id="posterPreview" class="preview-img" alt="Poster Preview">
             <input type="hidden" id="moviePosterBase64">
 
             <label>Download Link</label>
-            <input type="url" id="movieLink" class="form-control" placeholder="https://download-link.com">
-
-            <label>Movie Description & Screenshots (Gallery Upload)</label>
-            <div class="toolbar">
-                <button type="button" class="toolbar-btn" onclick="formatText('bold')"><i class="fa-solid fa-bold"></i></button>
-                <button type="button" class="toolbar-btn" onclick="formatText('italic')"><i class="fa-solid fa-italic"></i></button>
-                <button type="button" class="toolbar-btn" onclick="formatText('underline')"><i class="fa-solid fa-underline"></i></button>
-                <!-- Fixed JavaScript Trigger for Gallery Upload -->
-                <button type="button" class="toolbar-btn" onclick="triggerImageUpload()"><i class="fa-solid fa-image"></i> Upload Image</button>
-                <input type="file" id="hiddenGalleryInput" accept="image/*" style="display:none;" onchange="insertGalleryImage(event)">
-            </div>
-            <div id="editorContent" class="editor-box" contenteditable="true" placeholder="Movie ke baare mein yahan likhein aur gallery se images add karein..."></div>
+            <input type="url" id="movieLink" class="form-control" placeholder="https://drive.google.com/...">
 
             <button type="button" class="btn-publish" onclick="publishPost()"><i class="fa-solid fa-paper-plane"></i> Publish Post</button>
         </div>
+
     </div>
 
     <script>
+        let selectedImg = null;
+
+        // Text Formatting helper
+        function formatDoc(cmd, value = null) {
+            document.execCommand(cmd, false, value);
+        }
+
+        // Trigger Hidden Gallery Input
+        function triggerImageUpload() {
+            document.getElementById('hiddenGalleryInput').click();
+        }
+
+        // Insert Image into Editor from Gallery
+        function insertGalleryImage(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const base64 = e.target.result;
+                    const editor = document.getElementById('editorContent');
+                    editor.innerHTML += `<br><img src="${base64}" style="width:100%;" onclick="selectEditorImage(this)"><br>`;
+                    attachImageClickListeners();
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        // Click listener on editor images for resizing
+        function attachImageClickListeners() {
+            const imgs = document.querySelectorAll('#editorContent img');
+            imgs.forEach(img => {
+                img.onclick = function(e) {
+                    e.stopPropagation();
+                    imgs.forEach(i => i.classList.remove('selected'));
+                    this.classList.add('selected');
+                    selectedImg = this;
+                    document.getElementById('imgResizeBar').style.display = 'flex';
+                };
+            });
+        }
+
+        // Click outside to deselect image
+        document.getElementById('editorContent').onclick = function(e) {
+            if(e.target.tagName !== 'IMG') {
+                document.querySelectorAll('#editorContent img').forEach(i => i.classList.remove('selected'));
+                selectedImg = null;
+                document.getElementById('imgResizeBar').style.display = 'none';
+            }
+        };
+
+        // Resize selected image width
+        function resizeSelectedImage(size) {
+            if (selectedImg) {
+                selectedImg.style.width = size;
+            }
+        }
+
+        // Delete selected image
+        function deleteSelectedImage() {
+            if (selectedImg) {
+                selectedImg.remove();
+                selectedImg = null;
+                document.getElementById('imgResizeBar').style.display = 'none';
+            }
+        }
+
         // Main Poster Preview
         function previewMainPoster(event) {
             const file = event.target.files[0];
             if (file) {
                 const reader = new FileReader();
                 reader.onload = function(e) {
-                    const base64String = e.target.result;
-                    document.getElementById('moviePosterBase64').value = base64String;
+                    const base64 = e.target.result;
+                    document.getElementById('moviePosterBase64').value = base64;
                     const preview = document.getElementById('posterPreview');
-                    preview.src = base64String;
+                    preview.src = base64;
                     preview.style.display = 'block';
                 };
                 reader.readAsDataURL(file);
             }
         }
 
-        // Text Formatting helper
-        function formatText(command) {
-            document.execCommand(command, false, null);
-        }
-
-        // Trigger hidden file input programmatically
-        function triggerImageUpload() {
-            document.getElementById('hiddenGalleryInput').click();
-        }
-
-        // Insert Gallery Image into Description Box safely
-        function insertGalleryImage(event) {
-            const file = event.target.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    const base64String = e.target.result;
-                    const editor = document.getElementById('editorContent');
-                    editor.innerHTML += `<br><img src="${base64String}" style="max-width:100%; border-radius:8px; margin:10px 0;"><br>`;
-                };
-                reader.readAsDataURL(file);
-            }
-        }
-
-        // Publish Post Logic
+        // Publish Post to LocalStorage
         function publishPost() {
             const title = document.getElementById('postTitle').value;
             const category = document.getElementById('movieCategory').value;
@@ -124,30 +214,3 @@
             const genre = document.getElementById('movieGenre').value;
             const poster = document.getElementById('moviePosterBase64').value;
             const link = document.getElementById('movieLink').value;
-            const description = document.getElementById('editorContent').innerHTML;
-
-            if (!title || !poster || !link) {
-                alert('Please fill Title, upload Main Poster and provide Download Link!');
-                return;
-            }
-
-            const movieData = {
-                title,
-                category,
-                rating: rating || '8.0',
-                genre: genre || 'Movie • 2026',
-                poster,
-                link,
-                description
-            };
-
-            let movies = JSON.parse(localStorage.getItem('filmyzone_movies')) || [];
-            movies.push(movieData);
-            localStorage.setItem('filmyzone_movies', JSON.stringify(movies));
-
-            alert('Movie Post Published Successfully!');
-            window.location.href = 'movies.html';
-        }
-    </script>
-</body>
-</html>
