@@ -1,0 +1,124 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+    background-color: #0f1016;
+    color: #ffffff;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 5%;
+    background-color: #161822;
+    border-bottom: 1px solid #222638;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+.logo {
+    font-size: 24px;
+    font-weight: bold;
+    color: #e50914;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+nav {
+    display: flex;
+    gap: 30px;
+}
+
+nav a {
+    text-decoration: none;
+    color: #b3b3b3;
+    font-weight: 500;
+    transition: color 0.3s;
+}
+
+nav a:hover, nav a.active {
+    color: #ffffff;
+}
+
+.search-box {
+    display: flex;
+    background: #222638;
+    border-radius: 30px;
+    overflow: hidden;
+    border: 1px solid #333a56;
+}
+
+.search-box input {
+    background: transparent;
+    border: none;
+    padding: 10px 15px;
+    color: #fff;
+    outline: none;
+    font-size: 14px;
+    width: 180px;
+}
+
+.search-box button {
+    background: #e50914;
+    border: none;
+    color: white;
+    padding: 0 15px;
+    cursor: pointer;
+}
+
+.hero {
+    background: linear-gradient(rgba(15, 16, 22, 0.6), rgba(15, 16, 22, 0.9)), url('https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?auto=format&fit=crop&q=80&w=1600') no-repeat center center/cover;
+    padding: 100px 5%;
+    text-align: center;
+}
+
+.movies-section {
+    padding: 50px 5%;
+    flex: 1;
+}
+
+.movie-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 25px;
+}
+
+.movie-card {
+    background: #161822;
+    border-radius: 12px;
+    overflow: hidden;
+    border: 1px solid #222638;
+}
+
+.btn-download {
+    width: 100%;
+    background: #222638;
+    color: white;
+    border: 1px solid #333a56;
+    padding: 10px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+}
+
+.btn-download:hover {
+    background: #e50914;
+}
+
+footer {
+    background: #161822;
+    text-align: center;
+    padding: 20px;
+    border-top: 1px solid #222638;
+    color: #8c93a8;
+}
