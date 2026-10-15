@@ -19,6 +19,7 @@
         .toolbar-btn:hover { background: #e50914; color: white; }
         .btn-publish { width: 100%; background: #e50914; color: white; border: none; padding: 14px; border-radius: 8px; font-weight: bold; font-size: 16px; cursor: pointer; margin-top: 10px; }
         .btn-publish:hover { background: #b20710; }
+        .preview-img { width: 100px; height: 140px; object-fit: cover; border-radius: 6px; margin-top: 5px; display: none; border: 1px solid #333a56; }
     </style>
 </head>
 <body>
@@ -51,48 +52,78 @@
             <label>Genre & Year</label>
             <input type="text" id="movieGenre" class="form-control" placeholder="e.g. Action / Sci-Fi • 2010">
 
-            <label>Main Poster Image URL</label>
-            <input type="url" id="moviePoster" class="form-control" placeholder="https://image-link.com">
+            <label>Main Poster (Upload from Gallery)</label>
+            <input type="file" id="posterFileInput" class="form-control" accept="image/*" onchange="previewMainPoster(event)">
+            <img id="posterPreview" class="preview-img" alt="Poster Preview">
+            <!-- Hidden input to hold base64 string -->
+            <input type="hidden" id="moviePosterBase64">
 
             <label>Download Link</label>
             <input type="url" id="movieLink" class="form-control" placeholder="https://download-link.com">
 
-            <label>Movie Description & Details</label>
+            <label>Movie Description & Screenshots (Gallery Upload)</label>
             <div class="toolbar">
                 <button type="button" class="toolbar-btn" onclick="formatText('bold')"><i class="fa-solid fa-bold"></i></button>
                 <button type="button" class="toolbar-btn" onclick="formatText('italic')"><i class="fa-solid fa-italic"></i></button>
                 <button type="button" class="toolbar-btn" onclick="formatText('underline')"><i class="fa-solid fa-underline"></i></button>
-                <button type="button" class="toolbar-btn" onclick="insertImage()"><i class="fa-solid fa-image"></i> Image</button>
+                <!-- Gallery Image Upload Button -->
+                <label for="galleryImageInput" class="toolbar-btn" style="margin:0; display:inline-block; cursor:pointer;"><i class="fa-solid fa-image"></i> Upload Image</label>
+                <input type="file" id="galleryImageInput" accept="image/*" style="display:none;" onchange="insertGalleryImage(event)">
             </div>
-            <div id="editorContent" class="editor-box" contenteditable="true" placeholder="Movie ke baare mein yahan likhein..."></div>
+            <div id="editorContent" class="editor-box" contenteditable="true" placeholder="Movie ke baare mein yahan likhein aur gallery se images add karein..."></div>
 
             <button type="button" class="btn-publish" onclick="publishPost()"><i class="fa-solid fa-paper-plane"></i> Publish Post</button>
         </div>
     </div>
 
     <script>
+        // Convert Main Poster File to Base64
+        function previewMainPoster(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const base64String = e.target.result;
+                    document.getElementById('moviePosterBase64').value = base64String;
+                    const preview = document.getElementById('posterPreview');
+                    preview.src = base64String;
+                    preview.style.display = 'block';
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        // Format Text helper
         function formatText(command) {
             document.execCommand(command, false, null);
         }
 
-        function insertImage() {
-            const url = prompt("Enter Image URL:");
-            if (url) {
-                document.execCommand('insertImage', false, url);
+        // Insert Gallery Image into Description Box
+        function insertGalleryImage(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const base64String = e.target.result;
+                    const imgHtml = `<br><img src="${base64String}" style="max-width:100%; border-radius:8px; margin:10px 0;"><br>`;
+                    document.execCommand('insertHTML', false, imgHtml);
+                };
+                reader.readAsDataURL(file);
             }
         }
 
+        // Publish Post Logic
         function publishPost() {
             const title = document.getElementById('postTitle').value;
             const category = document.getElementById('movieCategory').value;
             const rating = document.getElementById('movieRating').value;
             const genre = document.getElementById('movieGenre').value;
-            const poster = document.getElementById('moviePoster').value;
+            const poster = document.getElementById('moviePosterBase64').value;
             const link = document.getElementById('movieLink').value;
             const description = document.getElementById('editorContent').innerHTML;
 
             if (!title || !poster || !link) {
-                alert('Please fill Title, Poster URL and Download Link!');
+                alert('Please fill Title, upload Main Poster and provide Download Link!');
                 return;
             }
 
@@ -110,7 +141,7 @@
             movies.push(movieData);
             localStorage.setItem('filmyzone_movies', JSON.stringify(movies));
 
-            alert('Movie Post Published Successfully!');
+            alert('Movie Post Published Successfully from Gallery!');
             window.location.href = 'movies.html';
         }
     </script>
