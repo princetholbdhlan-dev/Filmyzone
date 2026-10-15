@@ -11,8 +11,8 @@
     <!-- Header / Navbar -->
     <header>
         <div class="logo"><i class="fa-solid fa-film"></i> CinePulse</div>
-        <nav>
-            <a href="#" class="active">Home</a>
+        <nav id="navMenu">
+            <a href="#home" class="active">Home</a>
             <a href="#movies">Movies</a>
             <a href="#genres">Genres</a>
             <a href="#contact">Contact</a>
@@ -21,10 +21,13 @@
             <input type="text" id="searchInput" placeholder="Search movies...">
             <button><i class="fa-solid fa-search"></i></button>
         </div>
+        <div class="hamburger" id="hamburger">
+            <i class="fa-solid fa-bars"></i>
+        </div>
     </header>
 
     <!-- Hero Section -->
-    <section class="hero">
+    <section class="hero" id="home">
         <div class="hero-content">
             <h1>Unlimited Movies, Anywhere You Go</h1>
             <p>Download and stream the latest blockbusters, action, thriller, and sci-fi movies in HD quality.</p>
@@ -53,7 +56,7 @@
                 <div class="movie-info">
                     <h3>Inception</h3>
                     <p class="genre">Action / Sci-Fi • 2010</p>
-                    <button class="btn-download" onclick="openDownloadModal('Inception', '1080p', '2.1 GB')"><i class="fa-solid fa-download"></i> Download</button>
+                    <button class="btn-download" onclick="openDownloadModal('Inception', '2.1 GB', 'https://example.com/download/inception')"><i class="fa-solid fa-download"></i> Download</button>
                 </div>
             </div>
 
@@ -66,10 +69,58 @@
                 <div class="movie-info">
                     <h3>Interstellar</h3>
                     <p class="genre">Sci-Fi / Adventure • 2014</p>
-                    <button class="btn-download" onclick="openDownloadModal('Interstellar', '1080p', '2.4 GB')"><i class="fa-solid fa-download"></i> Download</button>
+                    <button class="btn-download" onclick="openDownloadModal('Interstellar', '2.4 GB', 'https://example.com/download/interstellar')"><i class="fa-solid fa-download"></i> Download</button>
+                </div>
+            </div>
+
+            <!-- Movie Card 3 -->
+            <div class="movie-card" data-category="action" data-title="The Dark Knight">
+                <div class="movie-poster">
+                    <img src="https://images.unsplash.com/photo-1509198397868-475647b2a1e5?auto=format&fit=crop&q=80&w=500" alt="The Dark Knight">
+                    <span class="rating"><i class="fa-solid fa-star"></i> 9.0</span>
+                </div>
+                <div class="movie-info">
+                    <h3>The Dark Knight</h3>
+                    <p class="genre">Action / Crime • 2008</p>
+                    <button class="btn-download" onclick="openDownloadModal('The Dark Knight', '1.9 GB', 'https://example.com/download/darkknight')"><i class="fa-solid fa-download"></i> Download</button>
+                </div>
+            </div>
+
+            <!-- Movie Card 4 -->
+            <div class="movie-card" data-category="drama" data-title="The Shawshank Redemption">
+                <div class="movie-poster">
+                    <img src="https://images.unsplash.com/photo-1485846234645-a62644f84728?auto=format&fit=crop&q=80&w=500" alt="Shawshank Redemption">
+                    <span class="rating"><i class="fa-solid fa-star"></i> 9.3</span>
+                </div>
+                <div class="movie-info">
+                    <h3>Shawshank Redemption</h3>
+                    <p class="genre">Drama • 1994</p>
+                    <button class="btn-download" onclick="openDownloadModal('Shawshank Redemption', '1.6 GB', 'https://example.com/download/shawshank')"><i class="fa-solid fa-download"></i> Download</button>
                 </div>
             </div>
         </div>
+    </section>
+
+    <!-- Genres Quick Section -->
+    <section class="genres-section" id="genres">
+        <h2>Browse by Genres</h2>
+        <div class="genre-grid">
+            <div class="genre-card" onclick="filterByGenre('action')"><i class="fa-solid fa-fire"></i> Action</div>
+            <div class="genre-card" onclick="filterByGenre('sci-fi')"><i class="fa-solid fa-rocket"></i> Sci-Fi</div>
+            <div class="genre-card" onclick="filterByGenre('drama')"><i class="fa-solid fa-masks-theater"></i> Drama</div>
+            <div class="genre-card" onclick="filterByGenre('horror')"><i class="fa-solid fa-ghost"></i> Horror</div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section class="contact-section" id="contact">
+        <h2>Contact / Request a Movie</h2>
+        <form class="contact-form" id="contactForm" onsubmit="handleContact(event)">
+            <input type="text" id="contactName" placeholder="Your Name" required>
+            <input type="email" id="contactEmail" placeholder="Your Email" required>
+            <textarea id="contactMsg" placeholder="Movie name or message..." rows="4" required></textarea>
+            <button type="submit" class="btn-primary">Send Message</button>
+        </form>
     </section>
 
     <!-- Download Modal -->
@@ -77,17 +128,17 @@
         <div class="modal-content">
             <span class="close-btn" onclick="closeDownloadModal()">&times;</span>
             <h2 id="modalTitle">Download Movie</h2>
-            <p>Select your preferred quality and server link below:</p>
+            <p>File Size: <span id="fileSize">2.1 GB</span> • Format: 1080p HD</p>
             <div class="download-options">
-                <a href="#" class="server-btn" onclick="triggerDownload(event)"><i class="fa-solid fa-server"></i> Server 1 (1080p HD - <span id="fileSize1">2.1 GB</span>)</a>
-                <a href="#" class="server-btn" onclick="triggerDownload(event)"><i class="fa-solid fa-server"></i> Server 2 (720p HQ - 1.2 GB)</a>
+                <a href="#" id="server1Btn" class="server-btn" target="_blank"><i class="fa-solid fa-server"></i> Server 1 (High Speed)</a>
+                <a href="#" id="server2Btn" class="server-btn" target="_blank"><i class="fa-solid fa-cloud-arrow-down"></i> Server 2 (Backup Link)</a>
             </div>
         </div>
     </div>
 
     <!-- Footer -->
     <footer>
-        <p>&copy; 2026 CinePulse. Built with HTML, CSS & JS. Hosted on Vercel.</p>
+        <p>&copy; 2026 CinePulse. All rights reserved. Built with HTML, CSS & JS.</p>
     </footer>
 
     <script src="script.js"></script>
