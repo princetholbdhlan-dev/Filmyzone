@@ -26,6 +26,13 @@
         /* Content Editable Area */
         .editor-box { flex: 1; min-height: 400px; background: #0f1016; border: 1px solid #333a56; border-top: none; border-radius: 0 0 8px 8px; padding: 15px; color: #fff; outline: none; font-size: 15px; line-height: 1.6; overflow-y: auto; }
         
+        /* Image Wrapper with Built-in Size Controls */
+        .img-wrapper { display: inline-block; margin: 15px 5px; text-align: center; vertical-align: top; max-width: 100%; }
+        .img-wrapper img { width: 250px; border-radius: 6px; display: block; border: 2px solid #333a56; }
+        .img-controls-bar { background: #222638; padding: 4px 8px; border-radius: 0 0 6px 6px; display: flex; gap: 4px; justify-content: center; border: 1px solid #333a56; border-top: none; }
+        .img-controls-bar button { background: #161822; color: #fff; border: 1px solid #333a56; padding: 2px 6px; font-size: 11px; border-radius: 3px; cursor: pointer; }
+        .img-controls-bar button:hover { background: #e50914; }
+
         /* Side by Side Box styling inside editor */
         .side-box-container { display: flex; gap: 15px; align-items: flex-start; margin: 15px 0; background: #10121a; padding: 12px; border: 1px dashed #333a56; border-radius: 8px; }
         .side-box-img { flex: 1; min-width: 120px; max-width: 180px; }
@@ -83,13 +90,13 @@
                 <button type="button" onclick="formatDoc('italic')"><i class="fa-solid fa-italic"></i></button>
                 <button type="button" onclick="formatDoc('underline')"><i class="fa-solid fa-underline"></i></button>
                 
-                <!-- Normal Image Add -->
+                <!-- Normal Image Add with Controls -->
                 <label class="toolbar-btn">
                     <i class="fa-solid fa-image"></i> Add Image
                     <input type="file" accept="image/*" style="display:none;" onchange="insertGalleryImage(event)">
                 </label>
 
-                <!-- NEW: Side-by-Side Image + Text Box Button -->
+                <!-- Side-by-Side Image + Text Box Button -->
                 <label class="toolbar-btn" style="background: #222638; border-color: #e50914;">
                     <i class="fa-solid fa-columns"></i> Image + Text Box
                     <input type="file" accept="image/*" style="display:none;" onchange="insertSideBox(event)">
@@ -97,7 +104,7 @@
             </div>
 
             <!-- Editable Typing Box -->
-            <div id="editorContent" class="editor-box" contenteditable="true" placeholder="Yahan movie ki details likhein. 'Image + Text Box' button se aap image ke right side perfectly text type kar sakte hain..."></div>
+            <div id="editorContent" class="editor-box" contenteditable="true" placeholder="Yahan movie ki details likhein. Har image ke niche size adjust karne ke liye buttons milenge..."></div>
         </div>
 
         <!-- RIGHT SIDE: ~30% Sidebar Settings -->
@@ -149,7 +156,7 @@
             selection.addRange(range);
         }
 
-        // Normal Gallery Image
+        // Insert Image with Direct Control Buttons Underneath
         function insertGalleryImage(event) {
             const file = event.target.files[0];
             if (file) {
@@ -158,14 +165,35 @@
                     const base64 = e.target.result;
                     const editor = document.getElementById('editorContent');
                     editor.focus();
-                    const imgHtml = `<br><img src="${base64}" style="width: 50%; display: block; margin: 10px auto; border-radius: 6px;"><br>`;
-                    document.execCommand('insertHTML', false, imgHtml);
+                    
+                    const wrapperHtml = `
+                        <div class="img-wrapper">
+                            <img src="${base64}" alt="Image">
+                            <div class="img-controls-bar">
+                                <button type="button" onclick="changeImgSize(this, '150px')">Small</button>
+                                <button type="button" onclick="changeImgSize(this, '280px')">Med</button>
+                                <button type="button" onclick="changeImgSize(this, '100%')">Full</button>
+                                <button type="button" onclick="this.closest('.img-wrapper').remove()" style="color:#ff4d4d;"><i class="fa-solid fa-trash"></i></button>
+                            </div>
+                        </div><p><br></p>
+                    `;
+                    document.execCommand('insertHTML', false, wrapperHtml);
                 };
                 reader.readAsDataURL(file);
             }
         }
 
-        // NEW: Insert Side-by-Side Box (Image on Left, Editable Textarea on Right)
+        function changeImgSize(btn, widthVal) {
+            const wrapper = btn.closest('.img-wrapper');
+            const img = wrapper.querySelector('img');
+            if(widthVal === '100%') {
+                img.style.width = '100%';
+            } else {
+                img.style.width = widthVal;
+            }
+        }
+
+        // Insert Side-by-Side Box
         function insertSideBox(event) {
             const file = event.target.files[0];
             if (file) {
