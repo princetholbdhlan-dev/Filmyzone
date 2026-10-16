@@ -4,52 +4,74 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Movie Details - FILMYZONE</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="../style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body { background-color: #0f1016; color: #fff; margin: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        .container { max-width: 900px; margin: 30px auto; padding: 20px; background: #161822; border-radius: 10px; border: 1px solid #222638; }
+        .download-box { text-align: center; margin: 30px 0; padding: 20px; background: #0f1016; border-radius: 8px; border: 1px dashed #e50914; }
+        .btn-download { display: inline-block; background: #e50914; color: #fff; padding: 14px 28px; border-radius: 6px; font-weight: bold; font-size: 16px; text-decoration: none; transition: background 0.2s; }
+        .btn-download:hover { background: #b20710; }
+        
+        /* Inside content style adjustments */
+        .content-body { font-size: 15px; line-height: 1.7; color: #d1d5db; }
+        .content-body h1, .content-body h2, .content-body h3, .content-body h4 { color: #fff; border-left: 3px solid #e50914; padding-left: 8px; margin-top: 20px; }
+        
+        /* Side by Side Box styling inside post */
+        .side-box-container { display: flex; gap: 15px; align-items: flex-start; margin: 15px 0; background: #10121a; padding: 12px; border: 1px solid #333a56; border-radius: 8px; }
+        .side-box-img-area img { border-radius: 6px; }
+        .img-controls-bar { display: none; } /* Hide edit controls in detail view */
+    </style>
 </head>
 <body>
-    <!-- Header / Navbar -->
-    <header>
-        <div class="logo"><i class="fa-solid fa-film"></i> FILMYZONE</div>
-        <nav id="navMenu">
-            <a href="index.html">Home</a>
-            <a href="movies.html">Movies</a>
-            <a href="index.html#genres">Genres</a>
-            <a href="index.html#contact">Contact</a>
-        </nav>
-        <div class="hamburger" id="hamburger">
-            <i class="fa-solid fa-bars"></i>
+
+    <header style="display:flex; justify-content:space-between; align-items:center; padding: 15px 30px; background:#161822; border-bottom:1px solid #222638;">
+        <div style="color:#e50914; font-weight:bold; font-size:20px;">FILMYZONE</div>
+        <div>
+            <a href="../index.html" style="color:#b3b3b3; text-decoration:none; margin-right:15px;">Home</a>
+            <a href="movies.html" style="color:#b3b3b3; text-decoration:none;">Movies</a>
         </div>
     </header>
 
-    <!-- Movie Detail Section -->
-    <section class="detail-section" style="padding: 40px 5%;">
-        <div class="detail-container" style="display: flex; gap: 40px; flex-wrap: wrap; align-items: flex-start;">
-            <div class="detail-poster" style="flex: 1; min-width: 280px; max-width: 350px;">
-                <img src="https://images.unsplash.com/photo-1536440136628-849c177e76a1?auto=format&fit=crop&q=80&w=500" alt="Movie Poster" style="width: 100%; border-radius: 12px; border: 1px solid #333a56;">
-            </div>
-            <div class="detail-info" style="flex: 2; min-width: 300px;">
-                <h1 id="movieTitle" style="font-size: 32px; margin-bottom: 10px;">Inception (2010)</h1>
-                <p class="genre" style="font-size: 15px; color: #8c93a8; margin-bottom: 15px;">Action / Sci-Fi • IMDb Rating: ⭐ 8.8 / 10</p>
-                <p style="color: #b3b3b3; line-height: 1.6; margin-bottom: 25px;">
-                    A thief who steals corporate secrets through the use of dream-sharing technology is given the inverse task of planting an idea into the mind of a C.E.O., but his tragic past may doom the project and his team to disaster.
-                </p>
-
-                <h3 style="margin-bottom: 15px; color: #fff;">Download Links (HD Quality)</h3>
-                <div class="download-options" style="display: flex; flex-direction: column; gap: 12px; max-width: 400px;">
-                    <a href="#" class="server-btn" target="_blank"><i class="fa-solid fa-server"></i> Download 1080p HD (2.1 GB)</a>
-                    <a href="#" class="server-btn" target="_blank"><i class="fa-solid fa-cloud-arrow-down"></i> Download 720p HQ (1.2 GB)</a>
-                    <a href="#" class="server-btn" target="_blank"><i class="fa-solid fa-bolt"></i> Fast Direct Link (480p)</a>
-                </div>
-            </div>
+    <div class="container">
+        <div id="movieDetailContent">
+            <!-- Full Movie Content (Text, Image, Table) will render here -->
         </div>
-    </section>
 
-    <!-- Footer -->
-    <footer>
-        <p>&copy; 2026 FILMYZONE. All rights reserved.</p>
-    </footer>
+        <!-- Download Link Section at the bottom -->
+        <div class="download-box">
+            <h3 style="margin-top:0; color:#fff;">Links / Download Options</h3>
+            <p style="color:#b3b3b3; font-size:13px; margin-bottom:15px;">Click below to download or view the file on GoFile server:</p>
+            <a id="downloadBtn" href="#" target="_blank" class="btn-download"><i class="fa-solid fa-download"></i> Fast Download (GoFile)</a>
+        </div>
+    </div>
 
-    <script src="script.js"></script>
+    <script>
+        function renderMovieDetail() {
+            const index = localStorage.getItem('selected_movie_index');
+            const movies = JSON.parse(localStorage.getItem('filmyzone_movies')) || [];
+
+            if (index === null || !movies[index]) {
+                document.getElementById('movieDetailContent').innerHTML = '<h3>Movie details not found.</h3>';
+                return;
+            }
+
+            const movie = movies[index];
+            document.title = movie.title + " - FILMYZONE";
+
+            // Render rich content created in editor
+            document.getElementById('movieDetailContent').innerHTML = `
+                <div class="content-body">
+                    ${movie.description}
+                </div>
+            `;
+
+            // Set GoFile download link to button
+            const downloadBtn = document.getElementById('downloadBtn');
+            downloadBtn.href = movie.link || '#';
+        }
+
+        window.onload = renderMovieDetail;
+    </script>
 </body>
 </html>
