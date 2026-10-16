@@ -81,7 +81,7 @@
             font-weight: bold;
             font-size: 15px;
             text-decoration: none;
-            pointer-events: none; /* Disabled until timer ends */
+            pointer-events: none;
             cursor: not-allowed;
             transition: all 0.3s;
         }
@@ -119,7 +119,6 @@
             <h3 style="margin-top:0; color:#fff;">Download Links</h3>
             <p style="color:#b3b3b3; font-size:13px; margin-bottom:15px;">Click below to start the fast download process:</p>
             
-            <!-- Triggers YouTube Video Modal Popup -->
             <button class="btn-download" onclick="startDownloadProcess()">
                 <i class="fa-solid fa-download"></i> Fast Download (GoFile)
             </button>
@@ -138,7 +137,6 @@
             <div class="modal-header"><i class="fa-brands fa-youtube" style="color:#e50914;"></i> Watch Video to Unlock Link</div>
             
             <div class="video-wrapper">
-                <!-- YouTube Video Embed (Replace VIDEO_ID with your YouTube video ID) -->
                 <iframe id="ytPlayer" src="" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
             </div>
 
@@ -154,10 +152,24 @@
 
     <script>
         let rawDownloadLink = "#";
+        let movieYtInput = "";
         let countdownTimer = null;
 
-        // Aapka YouTube Video Link / ID yahan lagayein
-        const YOUTUBE_VIDEO_ID = "dQw4w9WgXcQ"; // Apne video ka ID yahan replace karein
+        // Default Fallback YouTube ID agar koi link na bhara ho
+        const DEFAULT_YOUTUBE_ID = "dQw4w9WgXcQ";
+
+        function extractYoutubeId(urlOrId) {
+            if (!urlOrId) return DEFAULT_YOUTUBE_ID;
+            urlOrId = urlOrId.trim();
+            // Agar seedha ID diya ho (jaise 11 characters ki string)
+            if (urlOrId.length === 11 && !urlOrId.includes('/')) {
+                return urlOrId;
+            }
+            // Agar YouTube URL diya ho
+            const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+            const match = urlOrId.match(regExp);
+            return (match && match[2].length === 11) ? match[2] : DEFAULT_YOUTUBE_ID;
+        }
 
         function renderMovieDetail() {
             const index = localStorage.getItem('selected_movie_index');
@@ -168,14 +180,12 @@
                 let movies = JSON.parse(localStorage.getItem('filmyzone_movies')) || [];
                 movie = movies[index];
                 if (movie) {
-                    // Update View Counter
                     movies[index].views = (movies[index].views || 0) + 1;
                     localStorage.setItem('filmyzone_movies', JSON.stringify(movies));
                 }
             } else {
                 const defaultMovies = [
-                    { title: "Inception", link: "https://example.com/download/inception", description: "<h2>Inception (2010)</h2>" },
-                    { title: "Interstellar", link: "https://example.com/download/interstellar", description: "<h2>Interstellar (2014)</h2>" }
+                    { title: "Inception", link: "https://example.com/download/inception", description: "<h2>Inception (2010)</h2>" }
                 ];
                 movie = defaultMovies[index];
             }
@@ -188,14 +198,13 @@
             document.title = movie.title + " - FILMYZONE";
             document.getElementById('movieDetailContent').innerHTML = `<div class="content-body">${movie.description}</div>`;
             rawDownloadLink = movie.link || '#';
+            movieYtInput = movie.ytLink || ''; // Har post ka apna YouTube link/ID
 
-            // Social Share Links
             const shareText = encodeURIComponent(`🔥 Download *${movie.title}* in HD quality on FILMYZONE!\n\nLink: ` + window.location.href);
             document.getElementById('whatsappShare').href = `https://api.whatsapp.com/send?text=${shareText}`;
             document.getElementById('telegramShare').href = `https://t.me/share/url?url=${encodeURIComponent(window.location.href)}&text=${encodeURIComponent('Download ' + movie.title)}`;
         }
 
-        // Open Popup, Play Video & Start 30-Sec Countdown
         function startDownloadProcess() {
             const modal = document.getElementById('downloadModal');
             const iframe = document.getElementById('ytPlayer');
@@ -203,8 +212,9 @@
             const timerBox = document.getElementById('timerBox');
             const finalBtn = document.getElementById('finalDownloadLink');
 
-            // Load YouTube Video with AutoPlay
-            iframe.src = `https://www.youtube.com/embed/${YOUTUBE_VIDEO_ID}?autoplay=1`;
+            // Specific movie ka YouTube ID extract karega
+            const ytId = extractYoutubeId(movieYtInput);
+            iframe.src = `https://www.youtube.com/embed/${ytId}?autoplay=1`;
             
             modal.style.display = 'flex';
             
@@ -225,7 +235,6 @@
                     clearInterval(countdownTimer);
                     timerBox.style.display = 'none';
                     
-                    // Activate Download Button
                     finalBtn.classList.add('active');
                     finalBtn.href = rawDownloadLink;
                     finalBtn.innerHTML = `<i class="fa-solid fa-file-arrow-down"></i> Get Movie Download Link`;
@@ -238,7 +247,7 @@
             const iframe = document.getElementById('ytPlayer');
             
             modal.style.display = 'none';
-            iframe.src = ""; // Stop video playback
+            iframe.src = "";
             clearInterval(countdownTimer);
         }
 
