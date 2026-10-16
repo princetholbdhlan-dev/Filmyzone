@@ -34,9 +34,9 @@
         .img-controls-bar button:hover { background: #e50914; }
 
         /* Side by Side Box styling inside editor */
-        .side-box-container { display: flex; gap: 15px; align-items: flex-start; margin: 15px 0; background: #10121a; padding: 12px; border: 1px dashed #333a56; border-radius: 8px; }
-        .side-box-img { flex: 1; min-width: 120px; max-width: 180px; }
-        .side-box-img img { width: 100%; border-radius: 6px; display: block; }
+        .side-box-container { display: flex; gap: 15px; align-items: flex-start; margin: 15px 0; background: #10121a; padding: 12px; border: 1px dashed #333a56; border-radius: 8px; position: relative; }
+        .side-box-img-area { flex: 1; min-width: 120px; max-width: 180px; text-align: center; }
+        .side-box-img-area img { width: 100%; border-radius: 6px; display: block; border: 1px solid #333a56; }
         .side-box-text { flex: 2; outline: none; min-height: 120px; font-size: 14px; }
 
         /* Sidebar Form Controls */
@@ -90,6 +90,11 @@
                 <button type="button" onclick="formatDoc('italic')"><i class="fa-solid fa-italic"></i></button>
                 <button type="button" onclick="formatDoc('underline')"><i class="fa-solid fa-underline"></i></button>
                 
+                <!-- Text Alignment Buttons -->
+                <button type="button" onclick="formatDoc('justifyLeft')" title="Align Left"><i class="fa-solid fa-align-left"></i></button>
+                <button type="button" onclick="formatDoc('justifyCenter')" title="Align Center"><i class="fa-solid fa-align-center"></i></button>
+                <button type="button" onclick="formatDoc('justifyRight')" title="Align Right"><i class="fa-solid fa-align-right"></i></button>
+
                 <!-- Normal Image Add with Cursor Save -->
                 <label class="toolbar-btn" onclick="saveCurrentSelection()">
                     <i class="fa-solid fa-image"></i> Add Image
@@ -104,7 +109,7 @@
             </div>
 
             <!-- Editable Typing Box -->
-            <div id="editorContent" class="editor-box" contenteditable="true" placeholder="Jahan cursor hoga, image ya text box exactly wahin insert hoga..." onmouseup="saveCurrentSelection()" onkeyup="saveCurrentSelection()"></div>
+            <div id="editorContent" class="editor-box" contenteditable="true" placeholder="Yahan movie ki details likhein..." onmouseup="saveCurrentSelection()" onkeyup="saveCurrentSelection()"></div>
         </div>
 
         <!-- RIGHT SIDE: ~30% Sidebar Settings -->
@@ -141,19 +146,16 @@
     <script>
         let savedRange = null;
 
-        // Save current cursor position / selection inside editor
         function saveCurrentSelection() {
             const selection = window.getSelection();
             if (selection.rangeCount > 0) {
                 const range = selection.getRangeAt(0);
-                // Check if selection is inside editorContent
                 if (document.getElementById('editorContent').contains(range.commonAncestorContainer)) {
                     savedRange = range;
                 }
             }
         }
 
-        // Restore saved cursor position and insert HTML
         function restoreSelectionAndInsert(htmlString) {
             const editor = document.getElementById('editorContent');
             editor.focus();
@@ -163,7 +165,6 @@
                 selection.removeAllRanges();
                 selection.addRange(savedRange);
             } else {
-                // Fallback to end of editor if no range saved
                 const range = document.createRange();
                 range.selectNodeContents(editor);
                 range.collapse(false);
@@ -178,9 +179,9 @@
                 const el = document.createElement('div');
                 el.innerHTML = htmlString;
                 const frag = document.createDocumentFragment();
-                let node, lastNode;
+                let node;
                 while ((node = el.firstChild)) {
-                    lastNode = frag.appendChild(node);
+                    frag.appendChild(node);
                 }
                 range.deleteContents();
                 range.insertNode(frag);
@@ -239,7 +240,7 @@
             }
         }
 
-        // Insert Side-by-Side Box at Cursor Location
+        // Insert Side-by-Side Box with Image Size Controls
         function insertSideBox(event) {
             const file = event.target.files[0];
             if (file) {
@@ -247,21 +248,33 @@
                 reader.onload = function(e) {
                     const base64 = e.target.result;
                     const sideBoxHtml = `
-                        <div class="side-box-container">
-                            <div class="side-box-img">
-                                <img src="${base64}" alt="Movie Poster">
+                        <div class="side-box-container" contenteditable="false">
+                            <div class="side-box-img-area">
+                                <img src="${base64}" alt="Movie Poster" style="width: 130px;">
+                                <div class="img-controls-bar">
+                                    <button type="button" onclick="changeSideBoxImgSize(this, '90px')">S</button>
+                                    <button type="button" onclick="changeSideBoxImgSize(this, '130px')">M</button>
+                                    <button type="button" onclick="changeSideBoxImgSize(this, '100%')">Full</button>
+                                </div>
                             </div>
                             <div class="side-box-text" contenteditable="true">
                                 <p><strong>Movie Name:</strong> </p>
                                 <p><strong>Release Year:</strong> </p>
                                 <p><strong>Genre:</strong> </p>
                             </div>
+                            <button type="button" onclick="this.closest('.side-box-container').remove()" style="position: absolute; top: 8px; right: 8px; background: #e50914; color: #fff; border: none; padding: 2px 6px; border-radius: 4px; cursor: pointer; font-size: 11px;"><i class="fa-solid fa-trash"></i></button>
                         </div><p><br></p>
                     `;
                     restoreSelectionAndInsert(sideBoxHtml);
                 };
                 reader.readAsDataURL(file);
             }
+        }
+
+        function changeSideBoxImgSize(btn, widthVal) {
+            const container = btn.closest('.side-box-img-area');
+            const img = container.querySelector('img');
+            img.style.width = widthVal;
         }
 
         function previewMainPoster(event) {
