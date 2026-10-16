@@ -141,3 +141,18 @@ function handleContact(e) {
     alert(`Thank you ${name}! Your request has been sent successfully.`);
     document.getElementById('contactForm').reset();
 }
+<script>
+    const hamburger = document.getElementById('hamburger');
+    const mobileSidebar = document.getElementById('mobileSidebar');
+    const sidebarOverlay = document.getElementById('sidebarOverlay');
+    const closeSidebar = document.getElementById('closeSidebar');
+
+    function toggleSidebar() {
+        mobileSidebar.classList.toggle('active');
+        sidebarOverlay.classList.toggle('active');
+    }
+
+    hamburger.addEventListener('click', toggleSidebar);
+    closeSidebar.addEventListener('click', toggleSidebar);
+    sidebarOverlay.addEventListener('click', toggleSidebar);
+</script>
