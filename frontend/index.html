@@ -17,7 +17,7 @@
             <a href="pages/genres.html">Genres</a>
             <a href="pages/about.html">About</a>
             <a href="pages/contact.html">Contact</a>
-            <a href="pages/admin.html" style="color: #e50914; font-weight: bold;">Admin Editor</a>
+            <!-- Admin link removed from public view -->
         </nav>
         <div class="search-box">
             <input type="text" id="searchInput" placeholder="Search movies...">
@@ -80,7 +80,7 @@
         <p>&copy; 2026 FILMYZONE. All rights reserved. Built with HTML, CSS & JS.</p>
     </footer>
 
-    <!-- Mobile Sliding Sidebar Drawer -->
+    <!-- Mobile Sliding Sidebar Drawer (Admin link removed) -->
     <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
     <div class="mobile-sidebar" id="mobileSidebar">
         <div class="sidebar-header">
@@ -93,12 +93,10 @@
             <a href="pages/genres.html"><i class="fa-solid fa-layer-group"></i> Genres</a>
             <a href="pages/about.html"><i class="fa-solid fa-circle-info"></i> About</a>
             <a href="pages/contact.html"><i class="fa-solid fa-envelope"></i> Contact</a>
-            <a href="pages/admin.html" style="color: #e50914; font-weight: bold;"><i class="fa-solid fa-gear"></i> Admin Editor</a>
         </div>
     </div>
 
     <script>
-        // Sidebar Toggle Function
         function toggleSidebar() {
             const mobileSidebar = document.getElementById('mobileSidebar');
             const sidebarOverlay = document.getElementById('sidebarOverlay');
@@ -109,7 +107,6 @@
             }
         }
 
-        // Sample default static movies plus localStorage movies loader
         const defaultMovies = [
             {
                 title: "Inception",
