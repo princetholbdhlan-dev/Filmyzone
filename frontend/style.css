@@ -187,8 +187,9 @@ h2 {
 
 .movie-poster img {
     width: 100%;
-    height: 100%;
-    object-fit: cover;
+    height: 320px; /* ya jitni bhi fixed height ho */
+    object-fit: contain; /* 'cover' ki jagah 'contain' ya 'fill' karein */
+    background-color: #0f1016; /* agar poster chhota ho toh background match karne ke liye */
 }
 
 .rating {
