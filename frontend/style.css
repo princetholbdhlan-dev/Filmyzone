@@ -371,7 +371,44 @@ footer {
     margin-top: auto;
 }
 
-/* Responsive Menu */
+/* Responsive Side-by-Side Box Styles for Detail Page */
+.side-box-container {
+    display: flex;
+    gap: 15px;
+    align-items: flex-start;
+    margin: 15px 0;
+    background: #10121a;
+    padding: 12px;
+    border: 1px solid #333a56;
+    border-radius: 8px;
+    position: relative;
+    box-sizing: border-box;
+    width: 100%;
+}
+
+.side-box-img-area {
+    flex: 1;
+    min-width: 120px;
+    max-width: 180px;
+    text-align: center;
+}
+
+.side-box-img-area img {
+    width: 100%;
+    border-radius: 6px;
+    display: block;
+    border: 1px solid #333a56;
+}
+
+.side-box-text {
+    flex: 2;
+    outline: none;
+    min-height: 120px;
+    font-size: 14px;
+    word-break: break-word;
+}
+
+/* Responsive Menu & Mobile Layout Fixes */
 @media (max-width: 768px) {
     nav {
         display: none;
@@ -394,5 +431,23 @@ footer {
     }
     .search-box input {
         width: 110px;
+    }
+
+    /* Automatically stack Side-by-Side Box on mobile screens */
+    .side-box-container {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+    }
+    
+    .side-box-img-area {
+        max-width: 200px;
+        width: 100%;
+        margin-bottom: 10px;
+    }
+
+    .side-box-text {
+        width: 100%;
+        text-align: left;
     }
 }
