@@ -169,6 +169,16 @@
             `).join('');
         }
 
+        // Real-time Live Search Event Listener
+        document.getElementById('searchInput').addEventListener('input', function(e) {
+            const query = e.target.value.toLowerCase();
+            const cards = document.querySelectorAll('.movie-card');
+            cards.forEach(card => {
+                const title = card.querySelector('h3').textContent.toLowerCase();
+                card.style.display = title.includes(query) ? 'block' : 'none';
+            });
+        });
+
         function openMovieDetail(index, customCount) {
             const customMovies = JSON.parse(localStorage.getItem('filmyzone_movies')) || [];
             
@@ -177,25 +187,4 @@
                 localStorage.setItem('movie_source', 'local');
             } else {
                 const defaultIndex = index - customCount;
-                localStorage.setItem('selected_movie_index', defaultIndex);
-                localStorage.setItem('movie_source', 'default');
-            }
-            
-            window.location.href = 'pages/movie-detail.html';
-        }
-
-        function filterByGenre(category) {
-            const cards = document.querySelectorAll('.movie-card');
-            cards.forEach(card => {
-                if (category === 'all' || card.dataset.category === category) {
-                    card.style.display = 'block';
-                } else {
-                    card.style.display = 'none';
-                }
-            });
-        }
-
-        window.onload = loadAllMovies;
-    </script>
-</body>
-</html>
+                localStorage
