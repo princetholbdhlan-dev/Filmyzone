@@ -17,7 +17,6 @@
             <a href="pages/genres.html">Genres</a>
             <a href="pages/about.html">About</a>
             <a href="pages/contact.html">Contact</a>
-            <!-- Admin link removed from public view -->
         </nav>
         <div class="search-box">
             <input type="text" id="searchInput" placeholder="Search movies...">
@@ -41,11 +40,11 @@
     <section class="movies-section" id="movies">
         <h2>Trending & Popular Movies</h2>
         <div class="filter-buttons">
-            <button class="filter-btn active" data-filter="all">All</button>
-            <button class="filter-btn" data-filter="action">Action</button>
-            <button class="filter-btn" data-filter="sci-fi">Sci-Fi</button>
-            <button class="filter-btn" data-filter="drama">Drama</button>
-            <button class="filter-btn" data-filter="horror">Horror</button>
+            <button class="filter-btn active" onclick="filterByGenre('all')">All</button>
+            <button class="filter-btn" onclick="filterByGenre('action')">Action</button>
+            <button class="filter-btn" onclick="filterByGenre('sci-fi')">Sci-Fi</button>
+            <button class="filter-btn" onclick="filterByGenre('drama')">Drama</button>
+            <button class="filter-btn" onclick="filterByGenre('horror')">Horror</button>
         </div>
         
         <div class="movie-grid" id="movieGrid">
@@ -80,7 +79,7 @@
         <p>&copy; 2026 FILMYZONE. All rights reserved. Built with HTML, CSS & JS.</p>
     </footer>
 
-    <!-- Mobile Sliding Sidebar Drawer (Admin link removed) -->
+    <!-- Mobile Sliding Sidebar Drawer -->
     <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
     <div class="mobile-sidebar" id="mobileSidebar">
         <div class="sidebar-header">
@@ -100,7 +99,6 @@
         function toggleSidebar() {
             const mobileSidebar = document.getElementById('mobileSidebar');
             const sidebarOverlay = document.getElementById('sidebarOverlay');
-            
             if (mobileSidebar && sidebarOverlay) {
                 mobileSidebar.classList.toggle('active');
                 sidebarOverlay.classList.toggle('active');
@@ -115,7 +113,7 @@
                 genre: "Action / Sci-Fi • 2010",
                 poster: "https://images.unsplash.com/photo-1536440136628-849c177e76a1?auto=format&fit=crop&q=80&w=500",
                 link: "https://example.com/download/inception",
-                description: "<h2>Inception (2010)</h2><p>A thief who steals corporate secrets through the use of dream-sharing technology is given the inverse task of planting an idea into the mind of a C.E.O.</p>"
+                description: "<h2>Inception (2010)</h2><p>A thief who steals corporate secrets through the use of dream-sharing technology.</p>"
             },
             {
                 title: "Interstellar",
@@ -124,7 +122,7 @@
                 genre: "Sci-Fi / Adventure • 2014",
                 poster: "https://images.unsplash.com/photo-1506703719100-a0f3a48c0f86?auto=format&fit=crop&q=80&w=500",
                 link: "https://example.com/download/interstellar",
-                description: "<h2>Interstellar (2014)</h2><p>When Earth becomes uninhabitable in the future, a farmer and ex-NASA pilot, Joseph Cooper, is tasked to pilot a spacecraft, along with a team of researchers, to find a new planet for humans.</p>"
+                description: "<h2>Interstellar (2014)</h2><p>When Earth becomes uninhabitable, a team of researchers go through a wormhole in space.</p>"
             },
             {
                 title: "The Dark Knight",
@@ -133,7 +131,7 @@
                 genre: "Action / Crime • 2008",
                 poster: "https://images.unsplash.com/photo-1509198397868-475647b2a1e5?auto=format&fit=crop&q=80&w=500",
                 link: "https://example.com/download/darkknight",
-                description: "<h2>The Dark Knight (2008)</h2><p>When the menace known as the Joker wreaks havoc and chaos on the people of Gotham, Batman must accept one of the greatest psychological and physical tests of his ability to fight injustice.</p>"
+                description: "<h2>The Dark Knight (2008)</h2><p>When the menace known as the Joker wreaks havoc on Gotham, Batman must stop him.</p>"
             },
             {
                 title: "Shawshank Redemption",
@@ -142,14 +140,15 @@
                 genre: "Drama • 1994",
                 poster: "https://images.unsplash.com/photo-1485846234645-a62644f84728?auto=format&fit=crop&q=80&w=500",
                 link: "https://example.com/download/shawshank",
-                description: "<h2>The Shawshank Redemption (1994)</h2><p>Over the course of several years, two convicts form a friendship, seeking consolation and, eventually, redemption through basic compassion.</p>"
+                description: "<h2>The Shawshank Redemption (1994)</h2><p>Over the course of several years, two convicts form a deep friendship.</p>"
             }
         ];
 
         function loadAllMovies() {
             const grid = document.getElementById('movieGrid');
+            if (!grid) return;
+
             const customMovies = JSON.parse(localStorage.getItem('filmyzone_movies')) || [];
-            
             const allMovies = [...customMovies, ...defaultMovies];
 
             grid.innerHTML = allMovies.map((movie, index) => `
@@ -169,22 +168,55 @@
             `).join('');
         }
 
-        // Real-time Live Search Event Listener
-        document.getElementById('searchInput').addEventListener('input', function(e) {
-            const query = e.target.value.toLowerCase();
-            const cards = document.querySelectorAll('.movie-card');
-            cards.forEach(card => {
-                const title = card.querySelector('h3').textContent.toLowerCase();
-                card.style.display = title.includes(query) ? 'block' : 'none';
-            });
-        });
-
         function openMovieDetail(index, customCount) {
             const customMovies = JSON.parse(localStorage.getItem('filmyzone_movies')) || [];
-            
             if (index < customCount) {
                 localStorage.setItem('selected_movie_index', index);
                 localStorage.setItem('movie_source', 'local');
             } else {
-                const defaultIndex = index - customCount;
-                localStorage
+                localStorage.setItem('selected_movie_index', index - customCount);
+                localStorage.setItem('movie_source', 'default');
+            }
+            window.location.href = 'pages/movie-detail.html';
+        }
+
+        function filterByGenre(category) {
+            const cards = document.querySelectorAll('.movie-card');
+            const buttons = document.querySelectorAll('.filter-btn');
+            
+            buttons.forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+
+            cards.forEach(card => {
+                if (category === 'all' || card.dataset.category === category) {
+                    card.style.display = 'block';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        }
+
+        function handleContact(e) {
+            e.preventDefault();
+            alert('Aapka message safaltapoorvak bhej diya gaya hai!');
+            document.getElementById('contactForm').reset();
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            loadAllMovies();
+
+            const searchInput = document.getElementById('searchInput');
+            if (searchInput) {
+                searchInput.addEventListener('input', function(e) {
+                    const query = e.target.value.toLowerCase();
+                    const cards = document.querySelectorAll('.movie-card');
+                    cards.forEach(card => {
+                        const title = card.querySelector('h3').textContent.toLowerCase();
+                        card.style.display = title.includes(query) ? 'block' : 'none';
+                    });
+                });
+            }
+        });
+    </script>
+</body>
+</html>
