@@ -10,7 +10,7 @@
         body { background-color: #0f1016; color: #fff; margin: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
         .container { max-width: 900px; margin: 30px auto; padding: 20px; background: #161822; border-radius: 10px; border: 1px solid #222638; }
         .download-box { text-align: center; margin: 30px 0; padding: 20px; background: #0f1016; border-radius: 8px; border: 1px dashed #e50914; }
-        .btn-download { display: inline-block; background: #e50914; color: #fff; padding: 14px 28px; border-radius: 6px; font-weight: bold; font-size: 16px; text-decoration: none; transition: background 0.2s; }
+        .btn-download { display: inline-block; background: #e50914; color: #fff; padding: 14px 28px; border-radius: 6px; font-weight: bold; font-size: 16px; text-decoration: none; transition: background 0.2s; border: none; cursor: pointer; }
         .btn-download:hover { background: #b20710; }
         
         /* Social Share Buttons */
@@ -21,6 +21,84 @@
 
         .content-body { font-size: 15px; line-height: 1.7; color: #d1d5db; }
         .content-body h1, .content-body h2, .content-body h3, .content-body h4 { color: #fff; border-left: 3px solid #e50914; padding-left: 8px; margin-top: 20px; }
+
+        /* Popup Modal Styling */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.85);
+            z-index: 9999;
+            justify-content: center;
+            align-items: center;
+            padding: 15px;
+            box-sizing: border-box;
+        }
+        .modal-content {
+            background: #161822;
+            border: 1px solid #333a56;
+            border-radius: 12px;
+            max-width: 600px;
+            width: 100%;
+            padding: 20px;
+            text-align: center;
+            position: relative;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.7);
+        }
+        .modal-header {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 15px;
+            color: #fff;
+        }
+        .video-wrapper {
+            position: relative;
+            padding-bottom: 56.25%; /* 16:9 Aspect Ratio */
+            height: 0;
+            overflow: hidden;
+            border-radius: 8px;
+            background: #000;
+            margin-bottom: 15px;
+        }
+        .video-wrapper iframe {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            border: none;
+        }
+        .timer-box {
+            font-size: 16px;
+            color: #ffc107;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+        .btn-get-link {
+            display: inline-block;
+            background: #333a56;
+            color: #b3b3b3;
+            padding: 12px 25px;
+            border-radius: 6px;
+            font-weight: bold;
+            font-size: 15px;
+            text-decoration: none;
+            pointer-events: none; /* Disabled until timer ends */
+            cursor: not-allowed;
+            transition: all 0.3s;
+        }
+        .btn-get-link.active {
+            background: #25d366;
+            color: #fff;
+            pointer-events: auto;
+            cursor: pointer;
+        }
+        .close-modal {
+            position: absolute;
+            top: 10px; right: 15px;
+            font-size: 22px;
+            color: #b3b3b3;
+            cursor: pointer;
+        }
+        .close-modal:hover { color: #fff; }
     </style>
 </head>
 <body>
@@ -39,8 +117,12 @@
         <!-- Download & Share Section -->
         <div class="download-box">
             <h3 style="margin-top:0; color:#fff;">Download Links</h3>
-            <p style="color:#b3b3b3; font-size:13px; margin-bottom:15px;">Click below to download or view the file:</p>
-            <a id="downloadBtn" href="#" target="_blank" class="btn-download"><i class="fa-solid fa-download"></i> Fast Download (GoFile)</a>
+            <p style="color:#b3b3b3; font-size:13px; margin-bottom:15px;">Click below to start the fast download process:</p>
+            
+            <!-- Triggers YouTube Video Modal Popup -->
+            <button class="btn-download" onclick="startDownloadProcess()">
+                <i class="fa-solid fa-download"></i> Fast Download (GoFile)
+            </button>
             
             <div class="share-container">
                 <a id="whatsappShare" href="#" target="_blank" class="btn-share btn-whatsapp"><i class="fa-brands fa-whatsapp"></i> Share WhatsApp</a>
@@ -49,21 +131,53 @@
         </div>
     </div>
 
+    <!-- YouTube Video & 30-Sec Countdown Modal Popup -->
+    <div class="modal-overlay" id="downloadModal">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeDownloadModal()">&times;</span>
+            <div class="modal-header"><i class="fa-brands fa-youtube" style="color:#e50914;"></i> Watch Video to Unlock Link</div>
+            
+            <div class="video-wrapper">
+                <!-- YouTube Video Embed (Replace VIDEO_ID with your YouTube video ID) -->
+                <iframe id="ytPlayer" src="" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+            </div>
+
+            <div class="timer-box" id="timerBox">
+                <i class="fa-solid fa-clock"></i> Please wait <span id="countdown">30</span> seconds...
+            </div>
+
+            <a id="finalDownloadLink" href="#" target="_blank" class="btn-get-link">
+                <i class="fa-solid fa-lock"></i> Please Wait...
+            </a>
+        </div>
+    </div>
+
     <script>
+        let rawDownloadLink = "#";
+        let countdownTimer = null;
+
+        // Aapka YouTube Video Link / ID yahan lagayein
+        const YOUTUBE_VIDEO_ID = "dQw4w9WgXcQ"; // Apne video ka ID yahan replace karein
+
         function renderMovieDetail() {
             const index = localStorage.getItem('selected_movie_index');
             const source = localStorage.getItem('movie_source');
             let movie = null;
 
-            if (source === 'default') {
+            if (source === 'local') {
+                let movies = JSON.parse(localStorage.getItem('filmyzone_movies')) || [];
+                movie = movies[index];
+                if (movie) {
+                    // Update View Counter
+                    movies[index].views = (movies[index].views || 0) + 1;
+                    localStorage.setItem('filmyzone_movies', JSON.stringify(movies));
+                }
+            } else {
                 const defaultMovies = [
                     { title: "Inception", link: "https://example.com/download/inception", description: "<h2>Inception (2010)</h2>" },
                     { title: "Interstellar", link: "https://example.com/download/interstellar", description: "<h2>Interstellar (2014)</h2>" }
                 ];
                 movie = defaultMovies[index];
-            } else {
-                const movies = JSON.parse(localStorage.getItem('filmyzone_movies')) || [];
-                movie = movies[index];
             }
 
             if (!movie) {
@@ -73,12 +187,59 @@
 
             document.title = movie.title + " - FILMYZONE";
             document.getElementById('movieDetailContent').innerHTML = `<div class="content-body">${movie.description}</div>`;
-            document.getElementById('downloadBtn').href = movie.link || '#';
+            rawDownloadLink = movie.link || '#';
 
-            // Setup dynamic social share links
+            // Social Share Links
             const shareText = encodeURIComponent(`🔥 Download *${movie.title}* in HD quality on FILMYZONE!\n\nLink: ` + window.location.href);
             document.getElementById('whatsappShare').href = `https://api.whatsapp.com/send?text=${shareText}`;
             document.getElementById('telegramShare').href = `https://t.me/share/url?url=${encodeURIComponent(window.location.href)}&text=${encodeURIComponent('Download ' + movie.title)}`;
+        }
+
+        // Open Popup, Play Video & Start 30-Sec Countdown
+        function startDownloadProcess() {
+            const modal = document.getElementById('downloadModal');
+            const iframe = document.getElementById('ytPlayer');
+            const countdownEl = document.getElementById('countdown');
+            const timerBox = document.getElementById('timerBox');
+            const finalBtn = document.getElementById('finalDownloadLink');
+
+            // Load YouTube Video with AutoPlay
+            iframe.src = `https://www.youtube.com/embed/${YOUTUBE_VIDEO_ID}?autoplay=1`;
+            
+            modal.style.display = 'flex';
+            
+            let timeLeft = 30;
+            countdownEl.textContent = timeLeft;
+            timerBox.style.display = 'block';
+
+            finalBtn.classList.remove('active');
+            finalBtn.href = "#";
+            finalBtn.innerHTML = `<i class="fa-solid fa-lock"></i> Please Wait...`;
+
+            clearInterval(countdownTimer);
+            countdownTimer = setInterval(() => {
+                timeLeft--;
+                countdownEl.textContent = timeLeft;
+
+                if (timeLeft <= 0) {
+                    clearInterval(countdownTimer);
+                    timerBox.style.display = 'none';
+                    
+                    // Activate Download Button
+                    finalBtn.classList.add('active');
+                    finalBtn.href = rawDownloadLink;
+                    finalBtn.innerHTML = `<i class="fa-solid fa-file-arrow-down"></i> Get Movie Download Link`;
+                }
+            }, 1000);
+        }
+
+        function closeDownloadModal() {
+            const modal = document.getElementById('downloadModal');
+            const iframe = document.getElementById('ytPlayer');
+            
+            modal.style.display = 'none';
+            iframe.src = ""; // Stop video playback
+            clearInterval(countdownTimer);
         }
 
         window.onload = renderMovieDetail;
