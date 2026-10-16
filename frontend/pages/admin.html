@@ -74,16 +74,16 @@
                 </div>
             </div>
             
-            <input type="text" id="postTitle" class="form-control" placeholder="Enter Movie Title here..." style="font-size: 18px; padding: 12px; font-weight: bold;">
+            <input type="text" id="postTitle" class="form-control" value="Khalifa (2026) Malayalam Movie Download – Cast, Story, Trailer & Full Details" style="font-size: 18px; padding: 12px; font-weight: bold;">
 
             <!-- Advanced Formatting Toolbar -->
             <div id="formattingToolbar" class="toolbar">
                 <select onchange="applyHeading(this.value); this.selectedIndex=0;">
                     <option value="">Text Style / Heading</option>
                     <option value="p">Normal Paragraph</option>
-                    <option value="H1">Heading 1 (Bada)</option>
-                    <option value="H2">Heading 2 (Medium)</option>
-                    <option value="H3">Heading 3 (Chhota)</option>
+                    <option value="H1">Heading 1</option>
+                    <option value="H2">Heading 2</option>
+                    <option value="H3">Heading 3</option>
                 </select>
 
                 <select onchange="changeTextSize(this.value); this.selectedIndex=0;">
@@ -114,11 +114,23 @@
                 </label>
             </div>
 
-            <!-- Editable Typing Box (Compose View) -->
-            <div id="editorContent" class="editor-box" contenteditable="true" placeholder="Yahan movie ki details likhein..." onmouseup="saveCurrentSelection()" onkeyup="saveCurrentSelection()"></div>
+            <!-- Editable Typing Box (Compose View) pre-loaded with Khalifa default template -->
+            <div id="editorContent" class="editor-box" contenteditable="true" onmouseup="saveCurrentSelection()" onkeyup="saveCurrentSelection()">
+                <h2 style="text-align: left;">Khalifa (2026) Malayalam Movie Download – Cast, Story, Trailer & Full Details</h2>
+                <p><strong>Khalifa: The Ruler (2026)</strong> is a Malayalam action crime thriller directed by Vysakh and starring Prithviraj Sukumaran in the lead role. The movie features an intense story involving gold smuggling, family legacy, power, and revenge, with Mohanlal and several other well-known actors in important roles.</p>
+                
+                <h4 style="text-align: left;">Khalifa Movie Story</h4>
+                <p>Khalifa follows Aamir Ali, a powerful figure connected to an extensive gold-smuggling business inherited through a family legacy. Set against a backdrop of crime, wealth, and dangerous rivalries, the story explores the consequences of power, loyalty, and revenge.</p>
+                
+                <h4 style="text-align: left;">Khalifa Movie Cast</h4>
+                <p>• Prithviraj Sukumaran as Aamir Ali<br>• Mohanlal as Mambarakkal Ahmed Ali<br>• Malavika Sharma as Fiza<br>• Neil Nitin Mukesh<br>• Tovino Thomas<br>• Indrans<br>• Renji Panicker</p>
+                
+                <h4 style="text-align: left;">Frequently Asked Questions</h4>
+                <p><strong>1. What is the release date of Khalifa?</strong><br>Khalifa: The Ruler was released in theatres on 20 August 2026.</p>
+            </div>
             
             <!-- Raw HTML Code Editor (HTML View) -->
-            <textarea id="htmlEditor" class="html-textarea" placeholder="HTML code yahan dikhega aur aap edit kar sakte hain..."></textarea>
+            <textarea id="htmlEditor" class="html-textarea" placeholder="HTML code yahan dikhega..."></textarea>
         </div>
 
         <!-- RIGHT SIDE: ~30% Sidebar Settings -->
@@ -134,14 +146,14 @@
             </select>
 
             <label>IMDb Rating</label>
-            <input type="text" id="movieRating" class="form-control" placeholder="e.g. 8.8">
+            <input type="text" id="movieRating" class="form-control" value="8.8" placeholder="e.g. 8.8">
 
             <label>Genre & Year Subtitle</label>
-            <input type="text" id="movieGenre" class="form-control" placeholder="e.g. Action / Sci-Fi • 2026">
+            <input type="text" id="movieGenre" class="form-control" value="Action / Crime / Thriller • 2026" placeholder="e.g. Action / Sci-Fi • 2026">
 
             <label>Main Poster (Gallery Upload)</label>
             <input type="file" class="form-control" accept="image/*" onchange="previewMainPoster(event)" style="padding: 6px;">
-            <img id="posterPreview" class="preview-img" alt="Poster Preview">
+            <img id="posterPreview" class="preview-img" alt="Poster Preview" style="display: block;">
             <input type="hidden" id="moviePosterBase64">
 
             <label>Download Link</label>
@@ -236,13 +248,11 @@
             document.execCommand(cmd, false, value);
         }
 
-        // Professional Native formatBlock for Headings
         function applyHeading(tag) {
             if (!tag) return;
             document.execCommand('formatBlock', false, '<' + tag + '>');
         }
 
-        // Clean Span wrapper for Uniform Text Size
         function changeTextSize(size) {
             if (!size) return;
             const selection = window.getSelection();
@@ -310,9 +320,9 @@
                                 </div>
                             </div>
                             <div class="side-box-text" contenteditable="true">
-                                <p><strong>Movie Name:</strong> </p>
-                                <p><strong>Release Year:</strong> </p>
-                                <p><strong>Genre:</strong> </p>
+                                <p><strong>Movie Name:</strong> Khalifa: The Ruler</p>
+                                <p><strong>Release Year:</strong> 2026</p>
+                                <p><strong>Genre:</strong> Action, Crime, Thriller</p>
                             </div>
                             <button type="button" onclick="this.closest('.side-box-container').remove()" style="position: absolute; top: 8px; right: 8px; background: #e50914; color: #fff; border: none; padding: 2px 6px; border-radius: 4px; cursor: pointer; font-size: 11px;"><i class="fa-solid fa-trash"></i></button>
                         </div><p><br></p>
@@ -356,8 +366,8 @@
                 ? document.getElementById('htmlEditor').value 
                 : document.getElementById('editorContent').innerHTML;
 
-            if (!title || !poster || !link) {
-                alert('Kripya Title, Main Poster aur Download Link zaroor bharein!');
+            if (!title || !link) {
+                alert('Kripya Title aur Download Link zaroor bharein!');
                 return;
             }
 
@@ -366,7 +376,7 @@
                 category,
                 rating: rating || '8.0',
                 genre: genre || 'Movie • 2026',
-                poster,
+                poster: poster || 'https://via.placeholder.com/250x350',
                 link,
                 description
             };
