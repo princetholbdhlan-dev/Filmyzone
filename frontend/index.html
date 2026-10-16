@@ -176,5 +176,21 @@
 
         window.onload = loadAllMovies;
     </script>
+        <!-- Mobile Sliding Sidebar Drawer -->
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+    <div class="mobile-sidebar" id="mobileSidebar">
+        <div class="sidebar-header">
+            <div class="logo"><i class="fa-solid fa-film"></i> FILMYZONE</div>
+            <span class="close-sidebar" id="closeSidebar">&times;</span>
+        </div>
+        <div class="sidebar-links">
+            <a href="#home" class="active" onclick="toggleSidebar()"><i class="fa-solid fa-house"></i> Home</a>
+            <a href="#movies" onclick="toggleSidebar()"><i class="fa-solid fa-film"></i> Movies</a>
+            <a href="pages/genres.html"><i class="fa-solid fa-layer-group"></i> Genres</a>
+            <a href="pages/about.html"><i class="fa-solid fa-circle-info"></i> About</a>
+            <a href="pages/contact.html"><i class="fa-solid fa-envelope"></i> Contact</a>
+            <a href="pages/admin.html" style="color: #e50914; font-weight: bold;"><i class="fa-solid fa-gear"></i> Admin Editor</a>
+        </div>
+    </div>
 </body>
 </html>
