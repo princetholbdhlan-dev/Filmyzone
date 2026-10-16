@@ -13,14 +13,14 @@
         .btn-download { display: inline-block; background: #e50914; color: #fff; padding: 14px 28px; border-radius: 6px; font-weight: bold; font-size: 16px; text-decoration: none; transition: background 0.2s; }
         .btn-download:hover { background: #b20710; }
         
-        /* Inside content style adjustments */
+        /* Social Share Buttons */
+        .share-container { display: flex; justify-content: center; gap: 12px; margin-top: 15px; }
+        .btn-share { padding: 8px 16px; border-radius: 5px; font-size: 13px; font-weight: bold; color: white; text-decoration: none; display: inline-flex; align-items: center; gap: 6px; }
+        .btn-whatsapp { background: #25d366; }
+        .btn-telegram { background: #0088cc; }
+
         .content-body { font-size: 15px; line-height: 1.7; color: #d1d5db; }
         .content-body h1, .content-body h2, .content-body h3, .content-body h4 { color: #fff; border-left: 3px solid #e50914; padding-left: 8px; margin-top: 20px; }
-        
-        /* Side by Side Box styling inside post */
-        .side-box-container { display: flex; gap: 15px; align-items: flex-start; margin: 15px 0; background: #10121a; padding: 12px; border: 1px solid #333a56; border-radius: 8px; }
-        .side-box-img-area img { border-radius: 6px; }
-        .img-controls-bar { display: none; } /* Hide edit controls in detail view */
     </style>
 </head>
 <body>
@@ -34,41 +34,51 @@
     </header>
 
     <div class="container">
-        <div id="movieDetailContent">
-            <!-- Full Movie Content (Text, Image, Table) will render here -->
-        </div>
+        <div id="movieDetailContent"></div>
 
-        <!-- Download Link Section at the bottom -->
+        <!-- Download & Share Section -->
         <div class="download-box">
-            <h3 style="margin-top:0; color:#fff;">Links / Download Options</h3>
-            <p style="color:#b3b3b3; font-size:13px; margin-bottom:15px;">Click below to download or view the file on GoFile server:</p>
+            <h3 style="margin-top:0; color:#fff;">Download Links</h3>
+            <p style="color:#b3b3b3; font-size:13px; margin-bottom:15px;">Click below to download or view the file:</p>
             <a id="downloadBtn" href="#" target="_blank" class="btn-download"><i class="fa-solid fa-download"></i> Fast Download (GoFile)</a>
+            
+            <div class="share-container">
+                <a id="whatsappShare" href="#" target="_blank" class="btn-share btn-whatsapp"><i class="fa-brands fa-whatsapp"></i> Share WhatsApp</a>
+                <a id="telegramShare" href="#" target="_blank" class="btn-share btn-telegram"><i class="fa-brands fa-telegram"></i> Share Telegram</a>
+            </div>
         </div>
     </div>
 
     <script>
         function renderMovieDetail() {
             const index = localStorage.getItem('selected_movie_index');
-            const movies = JSON.parse(localStorage.getItem('filmyzone_movies')) || [];
+            const source = localStorage.getItem('movie_source');
+            let movie = null;
 
-            if (index === null || !movies[index]) {
+            if (source === 'default') {
+                const defaultMovies = [
+                    { title: "Inception", link: "https://example.com/download/inception", description: "<h2>Inception (2010)</h2>" },
+                    { title: "Interstellar", link: "https://example.com/download/interstellar", description: "<h2>Interstellar (2014)</h2>" }
+                ];
+                movie = defaultMovies[index];
+            } else {
+                const movies = JSON.parse(localStorage.getItem('filmyzone_movies')) || [];
+                movie = movies[index];
+            }
+
+            if (!movie) {
                 document.getElementById('movieDetailContent').innerHTML = '<h3>Movie details not found.</h3>';
                 return;
             }
 
-            const movie = movies[index];
             document.title = movie.title + " - FILMYZONE";
+            document.getElementById('movieDetailContent').innerHTML = `<div class="content-body">${movie.description}</div>`;
+            document.getElementById('downloadBtn').href = movie.link || '#';
 
-            // Render rich content created in editor
-            document.getElementById('movieDetailContent').innerHTML = `
-                <div class="content-body">
-                    ${movie.description}
-                </div>
-            `;
-
-            // Set GoFile download link to button
-            const downloadBtn = document.getElementById('downloadBtn');
-            downloadBtn.href = movie.link || '#';
+            // Setup dynamic social share links
+            const shareText = encodeURIComponent(`🔥 Download *${movie.title}* in HD quality on FILMYZONE!\n\nLink: ` + window.location.href);
+            document.getElementById('whatsappShare').href = `https://api.whatsapp.com/send?text=${shareText}`;
+            document.getElementById('telegramShare').href = `https://t.me/share/url?url=${encodeURIComponent(window.location.href)}&text=${encodeURIComponent('Download ' + movie.title)}`;
         }
 
         window.onload = renderMovieDetail;
