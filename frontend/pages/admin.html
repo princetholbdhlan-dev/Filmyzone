@@ -81,9 +81,9 @@
                 <select onchange="applyHeading(this.value); this.selectedIndex=0;">
                     <option value="">Text Style / Heading</option>
                     <option value="p">Normal Paragraph</option>
-                    <option value="h1">Heading 1</option>
-                    <option value="h2">Heading 2</option>
-                    <option value="h3">Heading 3</option>
+                    <option value="H1">Heading 1 (Bada)</option>
+                    <option value="H2">Heading 2 (Medium)</option>
+                    <option value="H3">Heading 3 (Chhota)</option>
                 </select>
 
                 <select onchange="changeTextSize(this.value); this.selectedIndex=0;">
@@ -236,20 +236,13 @@
             document.execCommand(cmd, false, value);
         }
 
-        // Custom Robust Heading Function
+        // Professional Native formatBlock for Headings
         function applyHeading(tag) {
             if (!tag) return;
-            const selection = window.getSelection();
-            if (!selection.rangeCount) return;
-            const range = selection.getRangeAt(0);
-            const element = document.createElement(tag);
-            element.appendChild(range.extractContents());
-            range.insertNode(element);
-            selection.removeAllRanges();
-            selection.addRange(range);
+            document.execCommand('formatBlock', false, '<' + tag + '>');
         }
 
-        // Custom Robust Text Size Function
+        // Clean Span wrapper for Uniform Text Size
         function changeTextSize(size) {
             if (!size) return;
             const selection = window.getSelection();
@@ -257,10 +250,14 @@
             const range = selection.getRangeAt(0);
             const span = document.createElement('span');
             span.style.fontSize = size;
-            span.appendChild(range.extractContents());
-            range.insertNode(span);
-            selection.removeAllRanges();
-            selection.addRange(range);
+            try {
+                span.appendChild(range.extractContents());
+                range.insertNode(span);
+                selection.removeAllRanges();
+                selection.addRange(range);
+            } catch(e) {
+                document.execCommand('fontSize', false, '4');
+            }
         }
 
         function insertGalleryImage(event) {
