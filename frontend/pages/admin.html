@@ -25,15 +25,12 @@
 
         /* Content Editable Area */
         .editor-box { flex: 1; min-height: 400px; background: #0f1016; border: 1px solid #333a56; border-top: none; border-radius: 0 0 8px 8px; padding: 15px; color: #fff; outline: none; font-size: 15px; line-height: 1.6; overflow-y: auto; }
-        .editor-box img { cursor: grab; border-radius: 6px; margin: 10px; display: inline-block; max-width: 100%; transition: outline 0.2s; }
-        .editor-box img:active { cursor: grabbing; }
-        .editor-box img.selected { outline: 3px solid #e50914; }
-
-        /* Image Control Floating Bar */
-        .img-resize-bar { display: none; background: #222638; padding: 8px; border-radius: 6px; margin-bottom: 10px; gap: 6px; align-items: center; border: 1px solid #333a56; flex-wrap: wrap; }
-        .img-resize-bar span { font-size: 12px; color: #ffc107; font-weight: 600; }
-        .img-resize-bar button { background: #161822; color: #fff; border: 1px solid #333a56; padding: 5px 8px; border-radius: 4px; cursor: pointer; font-size: 12px; display: inline-flex; align-items: center; gap: 3px; }
-        .img-resize-bar button:hover { background: #e50914; }
+        
+        /* Side by Side Box styling inside editor */
+        .side-box-container { display: flex; gap: 15px; align-items: flex-start; margin: 15px 0; background: #10121a; padding: 12px; border: 1px dashed #333a56; border-radius: 8px; }
+        .side-box-img { flex: 1; min-width: 120px; max-width: 180px; }
+        .side-box-img img { width: 100%; border-radius: 6px; display: block; }
+        .side-box-text { flex: 2; outline: none; min-height: 120px; font-size: 14px; }
 
         /* Sidebar Form Controls */
         .form-control { width: 100%; background: #0f1016; border: 1px solid #333a56; padding: 10px; border-radius: 8px; color: white; outline: none; font-size: 14px; margin-top: 5px; margin-bottom: 15px; box-sizing: border-box; }
@@ -64,49 +61,43 @@
             
             <input type="text" id="postTitle" class="form-control" placeholder="Enter Movie Title here..." style="font-size: 18px; padding: 12px; font-weight: bold;">
 
-            <!-- Image Control Toolbar -->
-            <div id="imgResizeBar" class="img-resize-bar">
-                <span><i class="fa-solid fa-sliders"></i> Image Actions:</span>
-                <button type="button" onclick="moveImageUp()"><i class="fa-solid fa-arrow-up"></i> Move Up</button>
-                <button type="button" onclick="moveImageDown()"><i class="fa-solid fa-arrow-down"></i> Move Down</button>
-                <button type="button" onclick="setImgFloat('left')">Text Right (Wrap)</button>
-                <button type="button" onclick="setImgFloat('none')">Center</button>
-                <button type="button" onclick="setImgWidth('40%')">Medium</button>
-                <button type="button" onclick="setImgWidth('100%')">Full</button>
-                <button type="button" onclick="deleteSelectedImage()" style="background:#e50914;"><i class="fa-solid fa-trash"></i> Delete</button>
-            </div>
-
             <!-- Advanced Formatting Toolbar -->
             <div class="toolbar">
                 <select onchange="formatDoc('formatBlock', this.value); this.selectedIndex=0;">
                     <option value="">Text Style / Heading</option>
                     <option value="p">Normal Paragraph</option>
-                    <option value="h1">Heading 1 (Bada)</option>
-                    <option value="h2">Heading 2 (Medium)</option>
-                    <option value="h3">Heading 3 (Chhota)</option>
+                    <option value="h1">Heading 1</option>
+                    <option value="h2">Heading 2</option>
+                    <option value="h3">Heading 3</option>
                 </select>
 
                 <select onchange="changeTextSize(this.value); this.selectedIndex=0;">
                     <option value="">Text Size</option>
-                    <option value="12px">Chhota (12px)</option>
-                    <option value="16px">Normal (16px)</option>
-                    <option value="20px">Bada (20px)</option>
-                    <option value="24px">Bahut Bada (24px)</option>
+                    <option value="12px">12px</option>
+                    <option value="16px">16px</option>
+                    <option value="20px">20px</option>
+                    <option value="24px">24px</option>
                 </select>
 
                 <button type="button" onclick="formatDoc('bold')"><i class="fa-solid fa-bold"></i></button>
                 <button type="button" onclick="formatDoc('italic')"><i class="fa-solid fa-italic"></i></button>
                 <button type="button" onclick="formatDoc('underline')"><i class="fa-solid fa-underline"></i></button>
                 
-                <!-- Add Image Label for Gallery -->
+                <!-- Normal Image Add -->
                 <label class="toolbar-btn">
                     <i class="fa-solid fa-image"></i> Add Image
                     <input type="file" accept="image/*" style="display:none;" onchange="insertGalleryImage(event)">
                 </label>
+
+                <!-- NEW: Side-by-Side Image + Text Box Button -->
+                <label class="toolbar-btn" style="background: #222638; border-color: #e50914;">
+                    <i class="fa-solid fa-columns"></i> Image + Text Box
+                    <input type="file" accept="image/*" style="display:none;" onchange="insertSideBox(event)">
+                </label>
             </div>
 
             <!-- Editable Typing Box -->
-            <div id="editorContent" class="editor-box" contenteditable="true" placeholder="Yahan movie ki poori details type karein. Image par touch karke use Move Up/Down ya Text Right kar sakte hain..."></div>
+            <div id="editorContent" class="editor-box" contenteditable="true" placeholder="Yahan movie ki details likhein. 'Image + Text Box' button se aap image ke right side perfectly text type kar sakte hain..."></div>
         </div>
 
         <!-- RIGHT SIDE: ~30% Sidebar Settings -->
@@ -141,8 +132,6 @@
     </div>
 
     <script>
-        let selectedImg = null;
-
         function formatDoc(cmd, value = null) {
             document.execCommand(cmd, false, value);
         }
@@ -160,6 +149,7 @@
             selection.addRange(range);
         }
 
+        // Normal Gallery Image
         function insertGalleryImage(event) {
             const file = event.target.files[0];
             if (file) {
@@ -168,80 +158,38 @@
                     const base64 = e.target.result;
                     const editor = document.getElementById('editorContent');
                     editor.focus();
-                    
-                    const imgHtml = `<br><img src="${base64}" draggable="true" style="width: 45%; float: left; margin: 10px;" onclick="selectEditorImage(this)"><br>`;
+                    const imgHtml = `<br><img src="${base64}" style="width: 50%; display: block; margin: 10px auto; border-radius: 6px;"><br>`;
                     document.execCommand('insertHTML', false, imgHtml);
-                    
-                    attachImageClickListeners();
                 };
                 reader.readAsDataURL(file);
             }
         }
 
-        function attachImageClickListeners() {
-            const imgs = document.querySelectorAll('#editorContent img');
-            imgs.forEach(img => {
-                img.setAttribute('draggable', 'true');
-                img.onclick = function(e) {
-                    e.stopPropagation();
-                    imgs.forEach(i => i.classList.remove('selected'));
-                    this.classList.add('selected');
-                    selectedImg = this;
-                    document.getElementById('imgResizeBar').style.display = 'flex';
+        // NEW: Insert Side-by-Side Box (Image on Left, Editable Textarea on Right)
+        function insertSideBox(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const base64 = e.target.result;
+                    const editor = document.getElementById('editorContent');
+                    editor.focus();
+                    
+                    const sideBoxHtml = `
+                        <div class="side-box-container">
+                            <div class="side-box-img">
+                                <img src="${base64}" alt="Movie Poster">
+                            </div>
+                            <div class="side-box-text" contenteditable="true">
+                                <p><strong>Movie Name:</strong> </p>
+                                <p><strong>Release Year:</strong> </p>
+                                <p><strong>Genre:</strong> </p>
+                            </div>
+                        </div><p><br></p>
+                    `;
+                    document.execCommand('insertHTML', false, sideBoxHtml);
                 };
-            });
-        }
-
-        document.getElementById('editorContent').onclick = function(e) {
-            if(e.target.tagName !== 'IMG') {
-                document.querySelectorAll('#editorContent img').forEach(i => i.classList.remove('selected'));
-                selectedImg = null;
-                document.getElementById('imgResizeBar').style.display = 'none';
-            }
-        };
-
-        function moveImageUp() {
-            if (selectedImg) {
-                const prev = selectedImg.previousElementSibling;
-                if (prev) {
-                    selectedImg.parentNode.insertBefore(selectedImg, prev);
-                }
-            }
-        }
-
-        function moveImageDown() {
-            if (selectedImg) {
-                const next = selectedImg.nextElementSibling;
-                if (next) {
-                    selectedImg.parentNode.insertBefore(next, selectedImg);
-                }
-            }
-        }
-
-        function setImgFloat(floatVal) {
-            if (selectedImg) {
-                if(floatVal === 'left') {
-                    selectedImg.style.float = 'left';
-                    selectedImg.style.margin = '10px 15px 10px 0';
-                } else {
-                    selectedImg.style.float = 'none';
-                    selectedImg.style.display = 'block';
-                    selectedImg.style.margin = '10px auto';
-                }
-            }
-        }
-
-        function setImgWidth(width) {
-            if (selectedImg) {
-                selectedImg.style.width = width;
-            }
-        }
-
-        function deleteSelectedImage() {
-            if (selectedImg) {
-                selectedImg.remove();
-                selectedImg = null;
-                document.getElementById('imgResizeBar').style.display = 'none';
+                reader.readAsDataURL(file);
             }
         }
 
