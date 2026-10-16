@@ -15,7 +15,7 @@
             <a href="#home" class="active">Home</a>
             <a href="#movies">Movies</a>
             <a href="#genres">Genres</a>
-            <a href="#contact">Contact</a>
+            <a href="pages/admin.html" style="color: #e50914; font-weight: bold;">Admin Editor</a>
         </nav>
         <div class="search-box">
             <input type="text" id="searchInput" placeholder="Search movies...">
@@ -47,57 +47,7 @@
         </div>
         
         <div class="movie-grid" id="movieGrid">
-            <!-- Movie Card 1 -->
-            <div class="movie-card" data-category="action" data-title="Inception">
-                <div class="movie-poster">
-                    <img src="https://images.unsplash.com/photo-1536440136628-849c177e76a1?auto=format&fit=crop&q=80&w=500" alt="Inception">
-                    <span class="rating"><i class="fa-solid fa-star"></i> 8.8</span>
-                </div>
-                <div class="movie-info">
-                    <h3>Inception</h3>
-                    <p class="genre">Action / Sci-Fi • 2010</p>
-                    <button class="btn-download" onclick="openDownloadModal('Inception', '2.1 GB', 'https://example.com/download/inception')"><i class="fa-solid fa-download"></i> Download</button>
-                </div>
-            </div>
-
-            <!-- Movie Card 2 -->
-            <div class="movie-card" data-category="sci-fi" data-title="Interstellar">
-                <div class="movie-poster">
-                    <img src="https://images.unsplash.com/photo-1506703719100-a0f3a48c0f86?auto=format&fit=crop&q=80&w=500" alt="Interstellar">
-                    <span class="rating"><i class="fa-solid fa-star"></i> 8.6</span>
-                </div>
-                <div class="movie-info">
-                    <h3>Interstellar</h3>
-                    <p class="genre">Sci-Fi / Adventure • 2014</p>
-                    <button class="btn-download" onclick="openDownloadModal('Interstellar', '2.4 GB', 'https://example.com/download/interstellar')"><i class="fa-solid fa-download"></i> Download</button>
-                </div>
-            </div>
-
-            <!-- Movie Card 3 -->
-            <div class="movie-card" data-category="action" data-title="The Dark Knight">
-                <div class="movie-poster">
-                    <img src="https://images.unsplash.com/photo-1509198397868-475647b2a1e5?auto=format&fit=crop&q=80&w=500" alt="The Dark Knight">
-                    <span class="rating"><i class="fa-solid fa-star"></i> 9.0</span>
-                </div>
-                <div class="movie-info">
-                    <h3>The Dark Knight</h3>
-                    <p class="genre">Action / Crime • 2008</p>
-                    <button class="btn-download" onclick="openDownloadModal('The Dark Knight', '1.9 GB', 'https://example.com/download/darkknight')"><i class="fa-solid fa-download"></i> Download</button>
-                </div>
-            </div>
-
-            <!-- Movie Card 4 -->
-            <div class="movie-card" data-category="drama" data-title="The Shawshank Redemption">
-                <div class="movie-poster">
-                    <img src="https://images.unsplash.com/photo-1485846234645-a62644f84728?auto=format&fit=crop&q=80&w=500" alt="Shawshank Redemption">
-                    <span class="rating"><i class="fa-solid fa-star"></i> 9.3</span>
-                </div>
-                <div class="movie-info">
-                    <h3>Shawshank Redemption</h3>
-                    <p class="genre">Drama • 1994</p>
-                    <button class="btn-download" onclick="openDownloadModal('Shawshank Redemption', '1.6 GB', 'https://example.com/download/shawshank')"><i class="fa-solid fa-download"></i> Download</button>
-                </div>
-            </div>
+            <!-- Dynamic and Hardcoded movies will load here -->
         </div>
     </section>
 
@@ -123,24 +73,106 @@
         </form>
     </section>
 
-    <!-- Download Modal -->
-    <div class="modal" id="downloadModal">
-        <div class="modal-content">
-            <span class="close-btn" onclick="closeDownloadModal()">&times;</span>
-            <h2 id="modalTitle">Download Movie</h2>
-            <p>File Size: <span id="fileSize">2.1 GB</span> • Format: 1080p HD</p>
-            <div class="download-options">
-                <a href="#" id="server1Btn" class="server-btn" target="_blank"><i class="fa-solid fa-server"></i> Server 1 (High Speed)</a>
-                <a href="#" id="server2Btn" class="server-btn" target="_blank"><i class="fa-solid fa-cloud-arrow-down"></i> Server 2 (Backup Link)</a>
-            </div>
-        </div>
-    </div>
-
     <!-- Footer -->
     <footer>
         <p>&copy; 2026 FILMYZONE. All rights reserved. Built with HTML, CSS & JS.</p>
     </footer>
 
-    <script src="script.js"></script>
+    <script>
+        // Sample default static movies plus localStorage movies loader
+        const defaultMovies = [
+            {
+                title: "Inception",
+                category: "action",
+                rating: "8.8",
+                genre: "Action / Sci-Fi • 2010",
+                poster: "https://images.unsplash.com/photo-1536440136628-849c177e76a1?auto=format&fit=crop&q=80&w=500",
+                link: "https://example.com/download/inception",
+                description: "<h2>Inception (2010)</h2><p>A thief who steals corporate secrets through the use of dream-sharing technology is given the inverse task of planting an idea into the mind of a C.E.O.</p>"
+            },
+            {
+                title: "Interstellar",
+                category: "sci-fi",
+                rating: "8.6",
+                genre: "Sci-Fi / Adventure • 2014",
+                poster: "https://images.unsplash.com/photo-1506703719100-a0f3a48c0f86?auto=format&fit=crop&q=80&w=500",
+                link: "https://example.com/download/interstellar",
+                description: "<h2>Interstellar (2014)</h2><p>When Earth becomes uninhabitable in the future, a farmer and ex-NASA pilot, Joseph Cooper, is tasked to pilot a spacecraft, along with a team of researchers, to find a new planet for humans.</p>"
+            },
+            {
+                title: "The Dark Knight",
+                category: "action",
+                rating: "9.0",
+                genre: "Action / Crime • 2008",
+                poster: "https://images.unsplash.com/photo-1509198397868-475647b2a1e5?auto=format&fit=crop&q=80&w=500",
+                link: "https://example.com/download/darkknight",
+                description: "<h2>The Dark Knight (2008)</h2><p>When the menace known as the Joker wreaks havoc and chaos on the people of Gotham, Batman must accept one of the greatest psychological and physical tests of his ability to fight injustice.</p>"
+            },
+            {
+                title: "Shawshank Redemption",
+                category: "drama",
+                rating: "9.3",
+                genre: "Drama • 1994",
+                poster: "https://images.unsplash.com/photo-1485846234645-a62644f84728?auto=format&fit=crop&q=80&w=500",
+                link: "https://example.com/download/shawshank",
+                description: "<h2>The Shawshank Redemption (1994)</h2><p>Over the course of several years, two convicts form a friendship, seeking consolation and, eventually, redemption through basic compassion.</p>"
+            }
+        ];
+
+        function loadAllMovies() {
+            const grid = document.getElementById('movieGrid');
+            const customMovies = JSON.parse(localStorage.getItem('filmyzone_movies')) || [];
+            
+            // Combine custom admin movies with default ones
+            const allMovies = [...customMovies, ...defaultMovies];
+
+            grid.innerHTML = allMovies.map((movie, index) => `
+                <div class="movie-card" data-category="${movie.category || 'action'}" onclick="openMovieDetail(${index}, ${customMovies.length})">
+                    <div class="movie-poster">
+                        <img src="${movie.poster}" alt="${movie.title}">
+                        <span class="rating"><i class="fa-solid fa-star"></i> ${movie.rating || '8.0'}</span>
+                    </div>
+                    <div class="movie-info">
+                        <h3>${movie.title}</h3>
+                        <p class="genre">${movie.genre || 'Movie'}</p>
+                        <button class="btn-download" onclick="event.stopPropagation(); openMovieDetail(${index}, ${customMovies.length})">
+                            <i class="fa-solid fa-download"></i> View & Download
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function openMovieDetail(index, customCount) {
+            // Store index and source type to load correct details
+            const customMovies = JSON.parse(localStorage.getItem('filmyzone_movies')) || [];
+            
+            if (index < customCount) {
+                // It's from admin panel localStorage
+                localStorage.setItem('selected_movie_index', index);
+                localStorage.setItem('movie_source', 'local');
+            } else {
+                // It's from default static array
+                const defaultIndex = index - customCount;
+                localStorage.setItem('selected_movie_index', defaultIndex);
+                localStorage.setItem('movie_source', 'default');
+            }
+            
+            window.location.href = 'pages/movie-detail.html';
+        }
+
+        function filterByGenre(category) {
+            const cards = document.querySelectorAll('.movie-card');
+            cards.forEach(card => {
+                if (category === 'all' || card.dataset.category === category) {
+                    card.style.display = 'block';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        }
+
+        window.onload = loadAllMovies;
+    </script>
 </body>
 </html>
