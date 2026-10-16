@@ -23,7 +23,7 @@
             <input type="text" id="searchInput" placeholder="Search movies...">
             <button><i class="fa-solid fa-search"></i></button>
         </div>
-        <div class="hamburger" id="hamburger">
+        <div class="hamburger" id="hamburger" onclick="toggleSidebar()">
             <i class="fa-solid fa-bars"></i>
         </div>
     </header>
@@ -80,7 +80,35 @@
         <p>&copy; 2026 FILMYZONE. All rights reserved. Built with HTML, CSS & JS.</p>
     </footer>
 
+    <!-- Mobile Sliding Sidebar Drawer -->
+    <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
+    <div class="mobile-sidebar" id="mobileSidebar">
+        <div class="sidebar-header">
+            <div class="logo"><i class="fa-solid fa-film"></i> FILMYZONE</div>
+            <span class="close-sidebar" id="closeSidebar" onclick="toggleSidebar()">&times;</span>
+        </div>
+        <div class="sidebar-links">
+            <a href="#home" class="active" onclick="toggleSidebar()"><i class="fa-solid fa-house"></i> Home</a>
+            <a href="#movies" onclick="toggleSidebar()"><i class="fa-solid fa-film"></i> Movies</a>
+            <a href="pages/genres.html"><i class="fa-solid fa-layer-group"></i> Genres</a>
+            <a href="pages/about.html"><i class="fa-solid fa-circle-info"></i> About</a>
+            <a href="pages/contact.html"><i class="fa-solid fa-envelope"></i> Contact</a>
+            <a href="pages/admin.html" style="color: #e50914; font-weight: bold;"><i class="fa-solid fa-gear"></i> Admin Editor</a>
+        </div>
+    </div>
+
     <script>
+        // Sidebar Toggle Function
+        function toggleSidebar() {
+            const mobileSidebar = document.getElementById('mobileSidebar');
+            const sidebarOverlay = document.getElementById('sidebarOverlay');
+            
+            if (mobileSidebar && sidebarOverlay) {
+                mobileSidebar.classList.toggle('active');
+                sidebarOverlay.classList.toggle('active');
+            }
+        }
+
         // Sample default static movies plus localStorage movies loader
         const defaultMovies = [
             {
@@ -125,7 +153,6 @@
             const grid = document.getElementById('movieGrid');
             const customMovies = JSON.parse(localStorage.getItem('filmyzone_movies')) || [];
             
-            // Combine custom admin movies with default ones
             const allMovies = [...customMovies, ...defaultMovies];
 
             grid.innerHTML = allMovies.map((movie, index) => `
@@ -146,15 +173,12 @@
         }
 
         function openMovieDetail(index, customCount) {
-            // Store index and source type to load correct details
             const customMovies = JSON.parse(localStorage.getItem('filmyzone_movies')) || [];
             
             if (index < customCount) {
-                // It's from admin panel localStorage
                 localStorage.setItem('selected_movie_index', index);
                 localStorage.setItem('movie_source', 'local');
             } else {
-                // It's from default static array
                 const defaultIndex = index - customCount;
                 localStorage.setItem('selected_movie_index', defaultIndex);
                 localStorage.setItem('movie_source', 'default');
@@ -176,21 +200,5 @@
 
         window.onload = loadAllMovies;
     </script>
-        <!-- Mobile Sliding Sidebar Drawer -->
-    <div class="sidebar-overlay" id="sidebarOverlay"></div>
-    <div class="mobile-sidebar" id="mobileSidebar">
-        <div class="sidebar-header">
-            <div class="logo"><i class="fa-solid fa-film"></i> FILMYZONE</div>
-            <span class="close-sidebar" id="closeSidebar">&times;</span>
-        </div>
-        <div class="sidebar-links">
-            <a href="#home" class="active" onclick="toggleSidebar()"><i class="fa-solid fa-house"></i> Home</a>
-            <a href="#movies" onclick="toggleSidebar()"><i class="fa-solid fa-film"></i> Movies</a>
-            <a href="pages/genres.html"><i class="fa-solid fa-layer-group"></i> Genres</a>
-            <a href="pages/about.html"><i class="fa-solid fa-circle-info"></i> About</a>
-            <a href="pages/contact.html"><i class="fa-solid fa-envelope"></i> Contact</a>
-            <a href="pages/admin.html" style="color: #e50914; font-weight: bold;"><i class="fa-solid fa-gear"></i> Admin Editor</a>
-        </div>
-    </div>
 </body>
 </html>
