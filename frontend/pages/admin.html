@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Studio & Dashboard - FILMYZONE</title>
+    <title>Professional Admin Dashboard - FILMYZONE</title>
     <link rel="stylesheet" href="../style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
@@ -29,6 +29,7 @@
             width: 100%; background: #e50914; color: white; border: none;
             padding: 12px; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 15px;
         }
+        .auth-box button:hover { background: #b20710; }
 
         /* Header */
         header { display: flex; justify-content: space-between; align-items: center; padding: 12px 25px; background: #161822; border-bottom: 1px solid #222638; }
@@ -67,23 +68,24 @@
         .sidebar-container { flex: 3; padding: 20px; background: #161822; border: 1px solid #222638; border-radius: 10px; height: fit-content; }
         @media(max-width: 900px) { .admin-wrapper { flex-direction: column; } }
 
-        /* Full Toolbar Styling */
-        .toolbar { display: flex; flex-wrap: wrap; gap: 6px; background: #0f1016; padding: 10px; border: 1px solid #333a56; border-radius: 8px 8px 0 0; align-items: center; }
-        .toolbar button, .toolbar select, .toolbar label.toolbar-btn { background: #161822; color: #b3b3b3; border: 1px solid #333a56; padding: 6px 10px; border-radius: 4px; cursor: pointer; font-size: 13px; outline: none; display: inline-flex; align-items: center; gap: 5px; }
+        /* Comprehensive Blogger-Style Toolbar */
+        .toolbar { display: flex; flex-wrap: wrap; gap: 5px; background: #0f1016; padding: 10px; border: 1px solid #333a56; border-radius: 8px 8px 0 0; align-items: center; }
+        .toolbar button, .toolbar select, .toolbar label.toolbar-btn, .toolbar input[type="color"] { background: #161822; color: #b3b3b3; border: 1px solid #333a56; padding: 5px 8px; border-radius: 4px; cursor: pointer; font-size: 12px; outline: none; display: inline-flex; align-items: center; gap: 4px; }
         .toolbar button:hover, .toolbar select:hover, .toolbar label.toolbar-btn:hover { background: #e50914; color: white; border-color: #e50914; }
+        .toolbar input[type="color"] { padding: 0 3px; height: 26px; width: 30px; vertical-align: middle; }
 
         /* Content Editable Area & HTML Textarea */
-        .editor-box { flex: 1; min-height: 400px; background: #0f1016; border: 1px solid #333a56; border-top: none; border-radius: 0 0 8px 8px; padding: 15px; color: #fff; outline: none; font-size: 15px; line-height: 1.6; overflow-y: auto; }
-        .html-textarea { flex: 1; min-height: 400px; background: #0f1016; border: 1px solid #333a56; border-top: none; border-radius: 0 0 8px 8px; padding: 15px; color: #00ffcc; outline: none; font-size: 14px; font-family: monospace; line-height: 1.6; resize: vertical; display: none; box-sizing: border-box; width: 100%; }
+        .editor-box { flex: 1; min-height: 420px; background: #0f1016; border: 1px solid #333a56; border-top: none; border-radius: 0 0 8px 8px; padding: 15px; color: #fff; outline: none; font-size: 15px; line-height: 1.6; overflow-y: auto; }
+        .html-textarea { flex: 1; min-height: 420px; background: #0f1016; border: 1px solid #333a56; border-top: none; border-radius: 0 0 8px 8px; padding: 15px; color: #00ffcc; outline: none; font-size: 14px; font-family: monospace; line-height: 1.6; resize: vertical; display: none; box-sizing: border-box; width: 100%; }
 
-        /* Image Wrapper with Built-in Size Controls */
+        /* Image Wrapper with Size Controls */
         .img-wrapper { display: inline-block; margin: 15px 5px; text-align: center; vertical-align: top; max-width: 100%; }
         .img-wrapper img { width: 250px; border-radius: 6px; display: block; border: 2px solid #333a56; }
         .img-controls-bar { background: #222638; padding: 4px 8px; border-radius: 0 0 6px 6px; display: flex; gap: 4px; justify-content: center; border: 1px solid #333a56; border-top: none; }
         .img-controls-bar button { background: #161822; color: #fff; border: 1px solid #333a56; padding: 2px 6px; font-size: 11px; border-radius: 3px; cursor: pointer; }
         .img-controls-bar button:hover { background: #e50914; }
 
-        /* Side by Side Box styling inside editor */
+        /* Side by Side Box inside editor */
         .side-box-container { display: flex; gap: 15px; align-items: flex-start; margin: 15px 0; background: #10121a; padding: 12px; border: 1px dashed #333a56; border-radius: 8px; position: relative; }
         .side-box-img-area { flex: 1; min-width: 120px; max-width: 180px; text-align: center; }
         .side-box-img-area img { width: 100%; border-radius: 6px; display: block; border: 1px solid #333a56; }
@@ -184,7 +186,7 @@
         </div>
     </div>
 
-    <!-- VIEW 2: FULL FEATURED ADVANCED EDITOR -->
+    <!-- VIEW 2: FULL FEATURED ADVANCED BLOGGER EDITOR -->
     <div class="editor-container-main" id="editorView">
         <div style="margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center;">
             <button onclick="backToDashboard()" style="background: #222638; color: #fff; border: 1px solid #333a56; padding: 8px 15px; border-radius: 6px; cursor: pointer; font-size: 13px;"><i class="fa-solid fa-arrow-left"></i> Back to Dashboard</button>
@@ -196,29 +198,42 @@
         <div class="admin-wrapper">
             <!-- LEFT SIDE: ~70% Editor Workspace -->
             <div class="editor-container">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
-                    <h3 style="font-size: 16px; margin: 0; border-left: 4px solid #e50914; padding-left: 10px;">Post Content</h3>
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                    <h3 style="font-size: 15px; margin: 0; border-left: 4px solid #e50914; padding-left: 10px;">Post Content</h3>
                     <!-- Compose / HTML View Toggle Tabs -->
                     <div style="display: flex; background: #0f1016; border: 1px solid #333a56; border-radius: 6px; overflow: hidden;">
-                        <button type="button" id="tabCompose" onclick="switchView('compose')" style="background: #e50914; color: white; border: none; padding: 6px 14px; font-size: 13px; cursor: pointer; font-weight: 600;">Compose</button>
-                        <button type="button" id="tabHtml" onclick="switchView('html')" style="background: transparent; color: #b3b3b3; border: none; padding: 6px 14px; font-size: 13px; cursor: pointer; font-weight: 600;">HTML</button>
+                        <button type="button" id="tabCompose" onclick="switchView('compose')" style="background: #e50914; color: white; border: none; padding: 5px 12px; font-size: 12px; cursor: pointer; font-weight: 600;">Compose</button>
+                        <button type="button" id="tabHtml" onclick="switchView('html')" style="background: transparent; color: #b3b3b3; border: none; padding: 5px 12px; font-size: 12px; cursor: pointer; font-weight: 600;">HTML</button>
                     </div>
                 </div>
                 
                 <input type="text" id="postTitle" class="form-control" placeholder="Enter Movie Title here..." style="font-size: 18px; padding: 12px; font-weight: bold;">
 
-                <!-- Advanced Formatting Toolbar -->
+                <!-- Comprehensive Blogger-Style Formatting Toolbar -->
                 <div id="formattingToolbar" class="toolbar">
-                    <select onchange="applyHeading(this.value); this.selectedIndex=0;">
-                        <option value="">Text Style / Heading</option>
-                        <option value="p">Normal Paragraph</option>
-                        <option value="H1">Heading 1 (Bada)</option>
-                        <option value="H2">Heading 2 (Medium)</option>
-                        <option value="H3">Heading 3 (Chhota)</option>
+                    <button type="button" onclick="formatDoc('undo')" title="Undo"><i class="fa-solid fa-rotate-left"></i></button>
+                    <button type="button" onclick="formatDoc('redo')" title="Redo"><i class="fa-solid fa-rotate-right"></i></button>
+                    
+                    <select onchange="applyFontName(this.value); this.selectedIndex=0;" title="Font Family">
+                        <option value="">Font</option>
+                        <option value="Arial">Arial</option>
+                        <option value="Courier New">Courier</option>
+                        <option value="Georgia">Georgia</option>
+                        <option value="Helvetica">Helvetica</option>
+                        <option value="Times New Roman">Times</option>
+                        <option value="Verdana">Verdana</option>
                     </select>
 
-                    <select onchange="changeTextSize(this.value); this.selectedIndex=0;">
-                        <option value="">Text Size</option>
+                    <select onchange="applyHeading(this.value); this.selectedIndex=0;" title="Paragraph Style">
+                        <option value="">Style</option>
+                        <option value="p">Normal</option>
+                        <option value="H1">Heading 1</option>
+                        <option value="H2">Heading 2</option>
+                        <option value="H3">Heading 3</option>
+                    </select>
+
+                    <select onchange="changeTextSize(this.value); this.selectedIndex=0;" title="Text Size">
+                        <option value="">Size</option>
                         <option value="12px">12px</option>
                         <option value="16px">16px</option>
                         <option value="20px">20px</option>
@@ -226,21 +241,32 @@
                         <option value="30px">30px</option>
                     </select>
 
-                    <button type="button" onclick="formatDoc('bold')"><i class="fa-solid fa-bold"></i></button>
-                    <button type="button" onclick="formatDoc('italic')"><i class="fa-solid fa-italic"></i></button>
-                    <button type="button" onclick="formatDoc('underline')"><i class="fa-solid fa-underline"></i></button>
+                    <button type="button" onclick="formatDoc('bold')" title="Bold"><i class="fa-solid fa-bold"></i></button>
+                    <button type="button" onclick="formatDoc('italic')" title="Italic"><i class="fa-solid fa-italic"></i></button>
+                    <button type="button" onclick="formatDoc('underline')" title="Underline"><i class="fa-solid fa-underline"></i></button>
+                    <button type="button" onclick="formatDoc('strikeThrough')" title="Strikethrough"><i class="fa-solid fa-strikethrough"></i></button>
+                    
+                    <label title="Text Color"><i class="fa-solid fa-font"></i> <input type="color" onchange="formatDoc('foreColor', this.value)"></label>
+                    <label title="Highlight Color"><i class="fa-solid fa-highlighter"></i> <input type="color" onchange="formatDoc('hiliteColor', this.value)" value="#ffff00"></label>
+
+                    <button type="button" onclick="insertLink()" title="Insert Link"><i class="fa-solid fa-link"></i></button>
                     
                     <button type="button" onclick="formatDoc('justifyLeft')" title="Align Left"><i class="fa-solid fa-align-left"></i></button>
                     <button type="button" onclick="formatDoc('justifyCenter')" title="Align Center"><i class="fa-solid fa-align-center"></i></button>
                     <button type="button" onclick="formatDoc('justifyRight')" title="Align Right"><i class="fa-solid fa-align-right"></i></button>
+                    <button type="button" onclick="formatDoc('justifyFull')" title="Justify"><i class="fa-solid fa-align-justify"></i></button>
 
-                    <label class="toolbar-btn" onclick="saveCurrentSelection()">
-                        <i class="fa-solid fa-image"></i> Add Image
+                    <button type="button" onclick="formatDoc('insertUnorderedList')" title="Bullet List"><i class="fa-solid fa-list-ul"></i></button>
+                    <button type="button" onclick="formatDoc('insertOrderedList')" title="Numbered List"><i class="fa-solid fa-list-ol"></i></button>
+                    <button type="button" onclick="applyBlockquote()" title="Quote"><i class="fa-solid fa-quote-right"></i></button>
+
+                    <label class="toolbar-btn" onclick="saveCurrentSelection()" title="Add Image">
+                        <i class="fa-solid fa-image"></i> Image
                         <input type="file" accept="image/*" style="display:none;" onchange="insertGalleryImage(event)">
                     </label>
 
-                    <label class="toolbar-btn" style="background: #222638; border-color: #e50914;" onclick="saveCurrentSelection()">
-                        <i class="fa-solid fa-columns"></i> Image + Text Box
+                    <label class="toolbar-btn" style="background: #222638; border-color: #e50914;" onclick="saveCurrentSelection()" title="Image + Text Box">
+                        <i class="fa-solid fa-columns"></i> Side-Box
                         <input type="file" accept="image/*" style="display:none;" onchange="insertSideBox(event)">
                     </label>
                 </div>
@@ -254,7 +280,7 @@
 
             <!-- RIGHT SIDE: ~30% Sidebar Settings -->
             <div class="sidebar-container">
-                <h3 style="font-size: 16px; margin-bottom: 15px; color: #fff; border-bottom: 1px solid #333a56; padding-bottom: 8px;"><i class="fa-solid fa-gear"></i> Post Settings</h3>
+                <h3 style="font-size: 15px; margin-bottom: 12px; color: #fff; border-bottom: 1px solid #333a56; padding-bottom: 8px;"><i class="fa-solid fa-gear"></i> Post Settings</h3>
 
                 <label>Post Status</label>
                 <select id="postStatus" class="form-control">
@@ -288,7 +314,7 @@
 
                 <!-- Data Backup & Recovery Section -->
                 <hr style="border-color: #333a56; margin: 20px 0;">
-                <h4 style="font-size: 14px; color: #b3b3b3; margin-bottom: 10px;"><i class="fa-solid fa-database"></i> Data Backup & Recovery</h4>
+                <h4 style="font-size: 13px; color: #b3b3b3; margin-bottom: 8px;"><i class="fa-solid fa-database"></i> Data Backup & Recovery</h4>
                 <button type="button" class="btn-backup" onclick="exportBackup()"><i class="fa-solid fa-download"></i> Export Backup (JSON)</button>
                 <button type="button" class="btn-backup" onclick="document.getElementById('importFile').click()"><i class="fa-solid fa-upload"></i> Import Backup</button>
                 <input type="file" id="importFile" style="display:none" accept=".json" onchange="importBackup(event)">
@@ -422,7 +448,7 @@
             }
         }
 
-        // --- ADVANCED EDITOR LOGIC ---
+        // --- COMPREHENSIVE ADVANCED EDITOR LOGIC ---
         let savedRange = null;
         let currentView = 'compose';
 
@@ -506,9 +532,25 @@
             document.execCommand(cmd, false, value);
         }
 
+        function applyFontName(font) {
+            if (!font) return;
+            document.execCommand('fontName', false, font);
+        }
+
         function applyHeading(tag) {
             if (!tag) return;
             document.execCommand('formatBlock', false, '<' + tag + '>');
+        }
+
+        function applyBlockquote() {
+            document.execCommand('formatBlock', false, '<blockquote>');
+        }
+
+        function insertLink() {
+            const url = prompt("Enter Link URL:", "https://");
+            if (url) {
+                document.execCommand('createLink', false, url);
+            }
         }
 
         function changeTextSize(size) {
