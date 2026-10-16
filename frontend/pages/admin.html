@@ -47,6 +47,11 @@
         
         .btn-publish { width: 100%; background: #e50914; color: white; border: none; padding: 14px; border-radius: 8px; font-weight: bold; font-size: 15px; cursor: pointer; margin-top: 15px; }
         .btn-publish:hover { background: #b20710; }
+        
+        /* Backup Buttons Styling */
+        .btn-backup { width: 100%; background: #222638; color: #fff; border: 1px solid #333a56; padding: 10px; border-radius: 6px; font-size: 13px; cursor: pointer; margin-top: 8px; font-weight: 600; }
+        .btn-backup:hover { background: #333a56; }
+
         .preview-img { width: 90px; height: 120px; object-fit: cover; border-radius: 6px; margin-top: 5px; display: none; border: 1px solid #333a56; }
     </style>
 </head>
@@ -148,6 +153,13 @@
             <input type="url" id="movieLink" class="form-control" placeholder="https://drive.google.com/...">
 
             <button type="button" class="btn-publish" onclick="publishPost()"><i class="fa-solid fa-paper-plane"></i> Publish Post</button>
+
+            <!-- Data Backup & Recovery Section -->
+            <hr style="border-color: #333a56; margin: 20px 0;">
+            <h4 style="font-size: 14px; color: #b3b3b3; margin-bottom: 10px;"><i class="fa-solid fa-database"></i> Data Backup & Recovery</h4>
+            <button type="button" class="btn-backup" onclick="exportBackup()"><i class="fa-solid fa-download"></i> Export Backup (JSON)</button>
+            <button type="button" class="btn-backup" onclick="document.getElementById('importFile').click()"><i class="fa-solid fa-upload"></i> Import Backup</button>
+            <input type="file" id="importFile" style="display:none" accept=".json" onchange="importBackup(event)">
         </div>
 
     </div>
@@ -236,13 +248,11 @@
             document.execCommand(cmd, false, value);
         }
 
-        // Professional Native formatBlock for Headings
         function applyHeading(tag) {
             if (!tag) return;
             document.execCommand('formatBlock', false, '<' + tag + '>');
         }
 
-        // Clean Span wrapper for Uniform Text Size
         function changeTextSize(size) {
             if (!size) return;
             const selection = window.getSelection();
@@ -377,6 +387,36 @@
 
             alert('Movie post safaltapoorvak publish ho gayi hai!');
             window.location.href = 'movies.html';
+        }
+
+        // Export Backup JSON
+        function exportBackup() {
+            const data = localStorage.getItem('filmyzone_movies') || '[]';
+            const blob = new Blob([data], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'filmyzone_backup.json';
+            a.click();
+        }
+
+        // Import Backup JSON
+        function importBackup(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    try {
+                        JSON.parse(e.target.result);
+                        localStorage.setItem('filmyzone_movies', e.target.result);
+                        alert('Backup successfully restore ho gaya hai!');
+                        location.reload();
+                    } catch (err) {
+                        alert('Invalid JSON backup file!');
+                    }
+                };
+                reader.readAsText(file);
+            }
         }
     </script>
 </body>
