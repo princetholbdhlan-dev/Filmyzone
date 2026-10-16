@@ -110,7 +110,7 @@
     <div id="authOverlay">
         <div class="auth-box">
             <h3><i class="fa-solid fa-lock" style="color: #e50914;"></i> Admin Login</h3>
-            <input type="password" id="adminPassInput" placeholder="Enter password (admin123)..." onkeydown="if(event.key === 'Enter') verifyPassword()">
+            <input type="password" id="adminPassInput" placeholder="Enter password..." onkeydown="if(event.key === 'Enter') verifyPassword()">
             <button onclick="verifyPassword()">Unlock Dashboard</button>
             <p id="errorMsg" style="color: #ff4d4d; font-size: 12px; margin-top: 10px; display: none;">Galat password!</p>
         </div>
@@ -307,6 +307,9 @@
                 <img id="posterPreview" class="preview-img" alt="Poster Preview">
                 <input type="hidden" id="moviePosterBase64">
 
+                <label>YouTube Video Link / ID</label>
+                <input type="text" id="movieYtLink" class="form-control" placeholder="e.g. https://youtu.be/XYZ...">
+
                 <label>Download Link</label>
                 <input type="url" id="movieLink" class="form-control" placeholder="https://drive.google.com/...">
 
@@ -401,6 +404,7 @@
             document.getElementById('editorContent').innerHTML = '';
             document.getElementById('movieRating').value = '8.8';
             document.getElementById('movieGenre').value = 'Action • 2026';
+            document.getElementById('movieYtLink').value = '';
             document.getElementById('movieLink').value = '';
             document.getElementById('moviePosterBase64').value = '';
             document.getElementById('posterPreview').style.display = 'none';
@@ -422,6 +426,7 @@
             document.getElementById('movieCategory').value = m.category || 'action';
             document.getElementById('movieRating').value = m.rating || '8.8';
             document.getElementById('movieGenre').value = m.genre || '';
+            document.getElementById('movieYtLink').value = m.ytLink || '';
             document.getElementById('movieLink').value = m.link || '';
             document.getElementById('postStatus').value = m.status || 'published';
             
@@ -663,6 +668,7 @@
             const rating = document.getElementById('movieRating').value;
             const genre = document.getElementById('movieGenre').value;
             const poster = document.getElementById('moviePosterBase64').value;
+            const ytLink = document.getElementById('movieYtLink').value;
             const link = document.getElementById('movieLink').value;
             const status = document.getElementById('postStatus').value;
             const editIndex = parseInt(document.getElementById('editIndex').value);
@@ -677,11 +683,11 @@
             if (editIndex >= 0) {
                 movies[editIndex] = {
                     ...movies[editIndex],
-                    title, description, category, rating, genre, poster: poster || movies[editIndex].poster, link, status
+                    title, description, category, rating, genre, poster: poster || movies[editIndex].poster, ytLink, link, status
                 };
             } else {
                 const newPost = {
-                    title, description, category, rating, genre, poster: poster || 'https://via.placeholder.com/250x350', link, status, views: 0
+                    title, description, category, rating, genre, poster: poster || 'https://via.placeholder.com/250x350', ytLink, link, status, views: 0
                 };
                 movies.push(newPost);
             }
