@@ -10,24 +10,23 @@
         body { background-color: #0f1016; color: #fff; margin: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
         .container { max-width: 900px; margin: 30px auto; padding: 20px; background: #161822; border-radius: 10px; border: 1px solid #222638; }
         .download-box { text-align: center; margin: 30px 0; padding: 20px; background: #0f1016; border-radius: 8px; border: 1px dashed #e50914; }
-        .btn-download { display: inline-block; background: #e50914; color: #fff; padding: 14px 28px; border-radius: 6px; font-weight: bold; font-size: 16px; text-decoration: none; transition: background 0.2s; border: none; cursor: pointer; }
+        .btn-download { display: inline-block; background: #e50914; color: #fff; padding: 14px 28px; border-radius: 6px; font-weight: bold; font-size: 16px; text-decoration: none; border: none; cursor: pointer; }
         .btn-download:hover { background: #b20710; }
         
-        /* Social Share Buttons */
         .share-container { display: flex; justify-content: center; gap: 12px; margin-top: 15px; }
         .btn-share { padding: 8px 16px; border-radius: 5px; font-size: 13px; font-weight: bold; color: white; text-decoration: none; display: inline-flex; align-items: center; gap: 6px; }
         .btn-whatsapp { background: #25d366; }
         .btn-telegram { background: #0088cc; }
 
         .content-body { font-size: 15px; line-height: 1.7; color: #d1d5db; }
-        .content-body h1, .content-body h2, .content-body h3, .content-body h4 { color: #fff; border-left: 3px solid #e50914; padding-left: 8px; margin-top: 20px; }
+        .content-body h1, .content-body h2, .content-body h3 { color: #fff; border-left: 3px solid #e50914; padding-left: 8px; margin-top: 20px; }
 
         /* Popup Modal Styling */
         .modal-overlay {
             display: none;
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0, 0, 0, 0.85);
+            background: rgba(0, 0, 0, 0.9);
             z-index: 9999;
             justify-content: center;
             align-items: center;
@@ -38,12 +37,14 @@
             background: #161822;
             border: 1px solid #333a56;
             border-radius: 12px;
-            max-width: 600px;
+            max-width: 650px;
             width: 100%;
             padding: 20px;
             text-align: center;
             position: relative;
             box-shadow: 0 10px 30px rgba(0,0,0,0.7);
+            max-height: 90vh;
+            overflow-y: auto;
         }
         .modal-header {
             font-size: 18px;
@@ -53,7 +54,7 @@
         }
         .video-wrapper {
             position: relative;
-            padding-bottom: 56.25%; /* 16:9 Aspect Ratio */
+            padding-bottom: 56.25%; /* 16:9 */
             height: 0;
             overflow: hidden;
             border-radius: 8px;
@@ -72,24 +73,26 @@
             font-weight: bold;
             margin-bottom: 15px;
         }
-        .btn-get-link {
+        
+        /* In-site Download Frame/Area */
+        #inSiteDownloadArea {
+            display: none;
+            margin-top: 15px;
+            padding: 15px;
+            background: #0f1016;
+            border-radius: 8px;
+            border: 1px solid #25d366;
+        }
+        .btn-final-action {
             display: inline-block;
-            background: #333a56;
-            color: #b3b3b3;
+            background: #25d366;
+            color: #fff;
             padding: 12px 25px;
             border-radius: 6px;
             font-weight: bold;
             font-size: 15px;
             text-decoration: none;
-            pointer-events: none;
-            cursor: not-allowed;
-            transition: all 0.3s;
-        }
-        .btn-get-link.active {
-            background: #25d366;
-            color: #fff;
-            pointer-events: auto;
-            cursor: pointer;
+            margin-top: 10px;
         }
         .close-modal {
             position: absolute;
@@ -114,13 +117,12 @@
     <div class="container">
         <div id="movieDetailContent"></div>
 
-        <!-- Download & Share Section -->
         <div class="download-box">
             <h3 style="margin-top:0; color:#fff;">Download Links</h3>
             <p style="color:#b3b3b3; font-size:13px; margin-bottom:15px;">Click below to start the fast download process:</p>
             
             <button class="btn-download" onclick="startDownloadProcess()">
-                <i class="fa-solid fa-download"></i> Fast Download (GoFile)
+                <i class="fa-solid fa-download"></i> Fast Download (Secure)
             </button>
             
             <div class="share-container">
@@ -134,7 +136,7 @@
     <div class="modal-overlay" id="downloadModal">
         <div class="modal-content">
             <span class="close-modal" onclick="closeDownloadModal()">&times;</span>
-            <div class="modal-header"><i class="fa-brands fa-youtube" style="color:#e50914;"></i> Watch Video to Unlock Link</div>
+            <div class="modal-header"><i class="fa-brands fa-youtube" style="color:#e50914;"></i> Watch Video to Unlock Download</div>
             
             <div class="video-wrapper">
                 <iframe id="ytPlayer" src="" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
@@ -144,9 +146,16 @@
                 <i class="fa-solid fa-clock"></i> Please wait <span id="countdown">30</span> seconds...
             </div>
 
-            <a id="finalDownloadLink" href="#" target="_blank" class="btn-get-link">
-                <i class="fa-solid fa-lock"></i> Please Wait...
-            </a>
+            <!-- Timer khatam hone ke baad yehin site ke andar open hoga -->
+            <div id="inSiteDownloadArea">
+                <p style="color: #00ff80; font-weight: bold; margin-bottom: 10px;"><i class="fa-solid fa-circle-check"></i> Download Link Unlocked!</p>
+                <p style="font-size: 13px; color: #b3b3b3; margin-bottom: 10px;">Aapki file taiyar hai. Neeche diye gaye button par click karke yahin se access karein:</p>
+                <iframe id="downloadIframe" src="" style="width:100%; height:200px; border:none; border-radius:6px; background:#fff; display:none; margin-bottom:10px;"></iframe>
+                <br>
+                <a id="finalDirectBtn" href="#" target="_blank" class="btn-final-action">
+                    <i class="fa-solid fa-cloud-arrow-down"></i> Click Here to Open File
+                </a>
+            </div>
         </div>
     </div>
 
@@ -154,18 +163,12 @@
         let rawDownloadLink = "#";
         let movieYtInput = "";
         let countdownTimer = null;
-
-        // Default Fallback YouTube ID agar koi link na bhara ho
         const DEFAULT_YOUTUBE_ID = "dQw4w9WgXcQ";
 
         function extractYoutubeId(urlOrId) {
             if (!urlOrId) return DEFAULT_YOUTUBE_ID;
             urlOrId = urlOrId.trim();
-            // Agar seedha ID diya ho (jaise 11 characters ki string)
-            if (urlOrId.length === 11 && !urlOrId.includes('/')) {
-                return urlOrId;
-            }
-            // Agar YouTube URL diya ho
+            if (urlOrId.length === 11 && !urlOrId.includes('/')) return urlOrId;
             const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
             const match = urlOrId.match(regExp);
             return (match && match[2].length === 11) ? match[2] : DEFAULT_YOUTUBE_ID;
@@ -198,7 +201,7 @@
             document.title = movie.title + " - FILMYZONE";
             document.getElementById('movieDetailContent').innerHTML = `<div class="content-body">${movie.description}</div>`;
             rawDownloadLink = movie.link || '#';
-            movieYtInput = movie.ytLink || ''; // Har post ka apna YouTube link/ID
+            movieYtInput = movie.ytLink || '';
 
             const shareText = encodeURIComponent(`🔥 Download *${movie.title}* in HD quality on FILMYZONE!\n\nLink: ` + window.location.href);
             document.getElementById('whatsappShare').href = `https://api.whatsapp.com/send?text=${shareText}`;
@@ -210,21 +213,18 @@
             const iframe = document.getElementById('ytPlayer');
             const countdownEl = document.getElementById('countdown');
             const timerBox = document.getElementById('timerBox');
-            const finalBtn = document.getElementById('finalDownloadLink');
+            const inSiteArea = document.getElementById('inSiteDownloadArea');
+            const finalBtn = document.getElementById('finalDirectBtn');
 
-            // Specific movie ka YouTube ID extract karega
             const ytId = extractYoutubeId(movieYtInput);
             iframe.src = `https://www.youtube.com/embed/${ytId}?autoplay=1`;
             
             modal.style.display = 'flex';
+            inSiteArea.style.display = 'none';
+            timerBox.style.display = 'block';
             
             let timeLeft = 30;
             countdownEl.textContent = timeLeft;
-            timerBox.style.display = 'block';
-
-            finalBtn.classList.remove('active');
-            finalBtn.href = "#";
-            finalBtn.innerHTML = `<i class="fa-solid fa-lock"></i> Please Wait...`;
 
             clearInterval(countdownTimer);
             countdownTimer = setInterval(() => {
@@ -235,9 +235,9 @@
                     clearInterval(countdownTimer);
                     timerBox.style.display = 'none';
                     
-                    finalBtn.classList.add('active');
+                    // Show download section inside the modal popup
                     finalBtn.href = rawDownloadLink;
-                    finalBtn.innerHTML = `<i class="fa-solid fa-file-arrow-down"></i> Get Movie Download Link`;
+                    inSiteArea.style.display = 'block';
                 }
             }, 1000);
         }
