@@ -161,12 +161,128 @@ h2 {
     border-color: #e50914;
 }
 
-/* Movie Grid */
-.movie-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-    gap: 20px;
+/* Horizontal Slider Row Container */
+.movie-slider-container {
+    position: relative;
+    padding: 10px 20px 25px;
 }
+
+.movie-slider {
+    display: flex;
+    gap: 15px;
+    overflow-x: auto;
+    scroll-behavior: smooth;
+    scrollbar-width: none; /* Firefox ke liye scrollbar hide */
+    padding-bottom: 10px;
+}
+
+.movie-slider::-webkit-scrollbar {
+    display: none; /* Chrome, Safari & Opera ke liye scrollbar hide */
+}
+
+/* Individual Card width in slider */
+.movie-card {
+    min-width: 150px;
+    max-width: 150px;
+    background: #12141d;
+    border-radius: 12px;
+    overflow: hidden;
+    border: 1px solid #1f2333;
+    flex-shrink: 0;
+    cursor: pointer;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    display: flex;
+    flex-direction: column;
+}
+
+@media (min-width: 768px) {
+    .movie-card {
+        min-width: 180px;
+        max-width: 180px;
+    }
+}
+
+.movie-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 25px rgba(168, 85, 247, 0.3);
+    border-color: #a855f7;
+}
+
+.movie-poster-wrapper {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 2 / 3;
+    background: #000;
+    overflow: hidden;
+}
+
+.movie-poster-wrapper img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.4s ease;
+}
+
+.movie-card:hover .movie-poster-wrapper img {
+    transform: scale(1.06);
+}
+
+.rating-tag {
+    position: absolute;
+    top: 6px;
+    right: 6px;
+    background: rgba(0, 0, 0, 0.75);
+    backdrop-filter: blur(4px);
+    color: #ffc107;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 10px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 3px;
+}
+
+.movie-details-info {
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    flex: 1;
+    justify-content: space-between;
+}
+
+.movie-details-info h3 {
+    font-size: 12px;
+    font-weight: 600;
+    color: #fff;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.movie-meta {
+    font-size: 10px;
+    color: #8e94a7;
+}
+
+.btn-app-action {
+    width: 100%;
+    background: linear-gradient(135deg, #a855f7, #6366f1);
+    color: #fff;
+    border: none;
+    padding: 6px 0;
+    border-radius: 6px;
+    font-size: 11px;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 4px;
+    margin-top: 4px;
+}
+
 
 .movie-card {
     background: #161822;
