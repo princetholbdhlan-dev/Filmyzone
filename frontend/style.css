@@ -653,3 +653,14 @@ footer {
 .sidebar-overlay.active {
     display: block;
 }
+/* Hide admin controls on public movie detail page */
+.img-controls-bar {
+    display: none !important;
+}
+
+/* Optional: Clean image layout */
+.img-wrapper img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 8px;
+}
