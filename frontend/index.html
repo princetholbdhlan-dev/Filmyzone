@@ -108,28 +108,36 @@
         const defaultMovies = [];
 
         function loadAllMovies() {
-            const grid = document.getElementById('movieGrid');
-            if (!grid) return;
+    const grid = document.getElementById('movieGrid');
+    if (!grid) return;
 
-            const customMovies = JSON.parse(localStorage.getItem('filmyzone_movies')) || [];
-            const allMovies = [...customMovies, ...defaultMovies];
+    // Grid class ko slider container class mein badal rahe hain
+    grid.className = "movie-slider";
 
-            grid.innerHTML = allMovies.map((movie, index) => `
-                <div class="movie-card" data-category="${movie.category || 'action'}" onclick="openMovieDetail(${index}, ${customMovies.length})">
-                    <div class="movie-poster">
-                        <img src="${movie.poster}" alt="${movie.title}">
-                        <span class="rating"><i class="fa-solid fa-star"></i> ${movie.rating || '8.0'}</span>
-                    </div>
-                    <div class="movie-info">
-                        <h3>${movie.title}</h3>
-                        <p class="genre">${movie.genre || 'Movie'}</p>
-                        <button class="btn-download" onclick="event.stopPropagation(); openMovieDetail(${index}, ${customMovies.length})">
-                            <i class="fa-solid fa-download"></i> View & Download
-                        </button>
-                    </div>
-                </div>
-            `).join('');
-        }
+    const customMovies = JSON.parse(localStorage.getItem('filmyzone_movies')) || [];
+    const allMovies = [...customMovies, ...defaultMovies];
+
+    if (allMovies.length === 0) {
+        grid.innerHTML = `<p style="color: #8e94a7; text-align: center; padding: 20px; width: 100%;">No movies published yet.</p>`;
+        return;
+    }
+
+    grid.innerHTML = allMovies.map((movie, index) => `
+        <div class="movie-card" data-category="${movie.category || 'action'}" onclick="openMovieDetail(${index}, ${customMovies.length})">
+            <div class="movie-poster-wrapper">
+                <img src="${movie.poster}" alt="${movie.title}" loading="lazy">
+                <div class="rating-tag"><i class="fa-solid fa-star"></i> ${movie.rating || '8.0'}</div>
+            </div>
+            <div class="movie-details-info">
+                <h3>${movie.title}</h3>
+                <div class="movie-meta">${movie.genre || 'Movie • 2026'}</div>
+                <button class="btn-app-action" onclick="event.stopPropagation(); openMovieDetail(${index}, ${customMovies.length})">
+                    <i class="fa-solid fa-play"></i> Watch
+                </button>
+            </div>
+        </div>
+    `).join('');
+}
 
         function openMovieDetail(index, customCount) {
             const customMovies = JSON.parse(localStorage.getItem('filmyzone_movies')) || [];
