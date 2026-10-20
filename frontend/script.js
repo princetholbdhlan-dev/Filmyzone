@@ -1,3 +1,7 @@
+const API_KEY = '39657756ae333e3e23fc57670ed4a12c';
+const BASE_URL = 'https://api.themoviedb.org/3';
+const IMAGE_BASE_URL = 'https://image.tmdb.org/t/p/w500'; // Poster images ke liye
+
 // Hamburger Mobile Menu Toggle
 const hamburger = document.getElementById('hamburger');
 const navMenu = document.getElementById('navMenu');
