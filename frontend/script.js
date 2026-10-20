@@ -1,6 +1,7 @@
+// TMDB API Configuration
 const API_KEY = '39657756ae333e3e23fc57670ed4a12c';
 const BASE_URL = 'https://api.themoviedb.org/3';
-const IMAGE_BASE_URL = 'https://image.tmdb.org/t/p/w500'; // Poster images ke liye
+const IMAGE_BASE_URL = 'https://image.tmdb.org/t/p/w500';
 
 // Hamburger Mobile Menu Toggle
 const hamburger = document.getElementById('hamburger');
@@ -12,46 +13,81 @@ if (hamburger && navMenu) {
     });
 }
 
-// Load Movies dynamically including LocalStorage Admin posts
+// Load Movies dynamically (TMDB API + LocalStorage Admin posts + Default fallback)
 document.addEventListener('DOMContentLoaded', () => {
     loadDynamicMovies();
 });
 
-function loadDynamicMovies() {
+async function loadDynamicMovies() {
     const movieGrid = document.getElementById('movieGrid');
     if (!movieGrid) return;
 
-    // Default movies
+    let tmdbMovies = [];
+
+    // 1. Fetch live movies from TMDB API
+    try {
+        const response = await fetch(`${BASE_URL}/trending/movie/day?api_key=${API_KEY}`);
+        const data = await response.json();
+        
+        if (data && data.results) {
+            tmdbMovies = data.results.map(movie => ({
+                id: movie.id,
+                title: movie.title || movie.name,
+                category: "action", // Default category or can be mapped based on genre IDs
+                genre: `TMDB Rating • ${movie.vote_average ? movie.vote_average.toFixed(1) : 'N/A'}`,
+                rating: movie.vote_average ? movie.vote_average.toFixed(1) : '8.0',
+                poster: movie.poster_path ? IMAGE_BASE_URL + movie.poster_path : 'https://images.unsplash.com/photo-1536440136628-849c177e76a1?auto=format&fit=crop&q=80&w=500',
+                isTmdb: true,
+                link: "#"
+            }));
+        }
+    } catch (error) {
+        console.error("Error fetching TMDB movies, falling back to local data:", error);
+    }
+
+    // 2. Default fallback movies
     const defaultMovies = [
         {
+            id: "inception",
             title: "Inception",
             category: "action",
             genre: "Action / Sci-Fi • 2010",
             rating: "8.8",
             poster: "https://images.unsplash.com/photo-1536440136628-849c177e76a1?auto=format&fit=crop&q=80&w=500",
+            isTmdb: false,
             link: "#"
         },
         {
+            id: "interstellar",
             title: "Interstellar",
             category: "sci-fi",
             genre: "Sci-Fi / Adventure • 2014",
             rating: "8.6",
             poster: "https://images.unsplash.com/photo-1506703719100-a0f3a48c0f86?auto=format&fit=crop&q=80&w=500",
+            isTmdb: false,
             link: "#"
         }
     ];
 
-    // Get admin added movies from LocalStorage
+    // 3. Get admin added movies from LocalStorage
     const adminMovies = JSON.parse(localStorage.getItem('filmyzone_movies')) || [];
-    const allMovies = [...defaultMovies, ...adminMovies];
+    
+    // Combine all sources (TMDB movies take priority for rich live content)
+    const allMovies = [...tmdbMovies, ...adminMovies, ...defaultMovies];
 
     movieGrid.innerHTML = '';
 
     allMovies.forEach(movie => {
         const card = document.createElement('div');
         card.className = 'movie-card';
-        card.setAttribute('data-category', movie.category);
+        card.setAttribute('data-category', movie.category || 'action');
         card.setAttribute('data-title', movie.title);
+
+        // Check if it's a TMDB movie or local/admin movie to handle click action correctly
+        if (movie.isTmdb) {
+            card.onclick = () => openMovieDetail(movie.id);
+            card.style.cursor = "pointer";
+        }
 
         card.innerHTML = `
             <div class="movie-poster">
@@ -61,11 +97,16 @@ function loadDynamicMovies() {
             <div class="movie-info">
                 <h3>${movie.title}</h3>
                 <p class="genre">${movie.genre}</p>
-                <button class="btn-download" onclick="openDownloadModal('${movie.title}', '2.1 GB', '${movie.link}')"><i class="fa-solid fa-download"></i> Download</button>
+                <button class="btn-download" onclick="event.stopPropagation(); openDownloadModal('${movie.title}', '2.1 GB', '${movie.link}')"><i class="fa-solid fa-download"></i> Download</button>
             </div>
         `;
         movieGrid.appendChild(card);
     });
+}
+
+// Redirect to Dynamic Movie Detail page with ID
+function openMovieDetail(movieId) {
+    window.location.href = `pages/movie.html?id=${movieId}`;
 }
 
 // Search functionality
@@ -109,54 +150,7 @@ function filterMovies(filter) {
     });
 }
 
-// Download Modal functionality
+// Download Modal functionality references
 const modal = document.getElementById('downloadModal');
 const modalTitle = document.getElementById('modalTitle');
 const fileSize = document.getElementById('fileSize');
-const server1Btn = document.getElementById('server1Btn');
-const server2Btn = document.getElementById('server2Btn');
-
-function openDownloadModal(title, size, link) {
-    if (modal) {
-        modalTitle.innerText = `Download: ${title}`;
-        fileSize.innerText = size;
-        server1Btn.href = link;
-        server2Btn.href = link;
-        modal.style.display = 'flex';
-    }
-}
-
-function closeDownloadModal() {
-    if (modal) {
-        modal.style.display = 'none';
-    }
-}
-
-window.onclick = function(event) {
-    if (event.target == modal) {
-        modal.style.display = 'none';
-    }
-}
-
-// Contact Form Handler
-function handleContact(e) {
-    e.preventDefault();
-    const name = document.getElementById('contactName').value;
-    alert(`Thank you ${name}! Your request has been sent successfully.`);
-    document.getElementById('contactForm').reset();
-}
-<script>
-    const hamburger = document.getElementById('hamburger');
-    const mobileSidebar = document.getElementById('mobileSidebar');
-    const sidebarOverlay = document.getElementById('sidebarOverlay');
-    const closeSidebar = document.getElementById('closeSidebar');
-
-    function toggleSidebar() {
-        mobileSidebar.classList.toggle('active');
-        sidebarOverlay.classList.toggle('active');
-    }
-
-    hamburger.addEventListener('click', toggleSidebar);
-    closeSidebar.addEventListener('click', toggleSidebar);
-    sidebarOverlay.addEventListener('click', toggleSidebar);
-</script>
